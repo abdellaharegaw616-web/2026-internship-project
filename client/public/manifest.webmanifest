@@ -1,0 +1,36 @@
+{
+  "name": "Task Flow Project Management",
+  "short_name": "Task Flow",
+  "description": "Manage projects, tasks, teams, and performance from one workspace.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#2563EB",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "48x48",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "/dashboard"
+    },
+    {
+      "name": "Tasks",
+      "short_name": "Tasks",
+      "url": "/tasks"
+    },
+    {
+      "name": "Projects",
+      "short_name": "Projects",
+      "url": "/projects"
+    }
+  ]
+}
