@@ -7,6 +7,7 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { getProjectStatusClass, getPriorityClass, formatDate, getDaysRemaining, getInitials, getAvatarColor, formatCurrency } from '../utils/helpers';
+import Avatar from '../components/common/Avatar';
 import toast from 'react-hot-toast';
 
 const STATUSES = ['Planning', 'Active', 'On Hold', 'Completed'];
@@ -267,9 +268,7 @@ function ProjectModal({ project, onClose, onSave, members, templates }) {
               ) : members.map(m => (
                 <label key={m._id} className="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer">
                   <input type="checkbox" checked={form.members.includes(m._id)} onChange={() => toggleMember(m._id)} className="accent-blue-600" />
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ${getAvatarColor(m.role)}`}>
-                    {getInitials(m.name)}
-                  </div>
+                  <Avatar user={m} className="w-7 h-7 text-[10px]" />
                   <span className="text-sm text-slate-700 dark:text-slate-300">{m.name}</span>
                   <span className="text-xs text-slate-400 dark:text-slate-500 ml-auto">{m.department?.name || m.role}</span>
                 </label>
@@ -309,14 +308,26 @@ export default function Projects() {
   const { canManage, isAdmin } = useAuth();
   const navigate = useNavigate();
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+
   const fetchProjects = async () => {
     try {
-      const params = { archived: showArchived ? 'true' : 'false' };
+      setLoading(true);
+      const params = { archived: showArchived ? 'true' : 'false', page, limit: 10 };
       if (search) params.search = search;
       if (statusFilter) params.status = statusFilter;
       if (priorityFilter) params.priority = priorityFilter;
       const { data } = await api.get('/projects', { params });
-      setProjects(data.projects);
+      
+      if (data.projects) {
+        setProjects(data.projects);
+        setTotalPages(data.pages || 1);
+        setTotalItems(data.total || data.count);
+      } else {
+        setProjects(data || []);
+      }
     } catch {
       toast.error('Failed to load projects');
     } finally {
@@ -324,7 +335,9 @@ export default function Projects() {
     }
   };
 
-  useEffect(() => { fetchProjects(); }, [search, statusFilter, priorityFilter, showArchived]);
+  useEffect(() => { fetchProjects(); }, [search, statusFilter, priorityFilter, showArchived, page]);
+
+  useEffect(() => { setPage(1); }, [search, statusFilter, priorityFilter, showArchived]);
 
   useEffect(() => {
     api.get('/projects/team/members').then(({ data }) => setMembers(data.members || [])).catch(() => {});
@@ -475,9 +488,7 @@ export default function Projects() {
                       <td className="px-5 py-4">
                         <div className="flex avatar-stack">
                           {(p.members || []).slice(0, 3).map(m => (
-                            <div key={m._id} className={`avatar w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ${getAvatarColor(m.role)}`} title={m.name}>
-                              {getInitials(m.name)}
-                            </div>
+                            <Avatar key={m._id} user={m} className="avatar w-7 h-7 text-[10px]" />
                           ))}
                           {p.members?.length > 3 && (
                             <div className="avatar w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs font-semibold text-slate-600 dark:text-slate-300">
@@ -522,8 +533,29 @@ export default function Projects() {
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 flex items-center justify-between">
-            <span>{projects.length} project{projects.length !== 1 ? 's' : ''} found</span>
+          <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 flex items-center justify-between bg-slate-50 dark:bg-slate-900">
+            <span>{totalItems} project{totalItems !== 1 ? 's' : ''} found</span>
+            
+            {totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="text-xs">Page {page} of {totalPages}</span>
+                <button 
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+
             {(statusFilter || priorityFilter || search) && (
               <button onClick={() => { setSearch(''); setStatusFilter(''); setPriorityFilter(''); }}
                 className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">

@@ -12,7 +12,7 @@ router.use(protect);
 
 router.get('/projects/:projectId', exportProjectReport);
 router.get('/tasks', exportTaskReport);
-router.get('/team', authorize('Admin', 'ProjectManager'), exportTeamReport);
-router.get('/projects-summary', authorize('Admin', 'ProjectManager'), exportProjectsSummary);
+router.get('/team', authorize('SuperAdmin', 'Admin', 'ProjectManager'), exportTeamReport);
+router.get('/projects-summary', authorize('SuperAdmin', 'Admin', 'ProjectManager'), exportProjectsSummary);
 
 module.exports = router;

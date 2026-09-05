@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import userService from '../../services/userService';
 import taskService from '../../services/taskService';
 import { getInitials, getAvatarColor, getRoleLabel, getRoleClass } from '../../utils/helpers';
+import Avatar from '../../components/common/Avatar';
 import { ArrowLeft, Mail, Phone, Building, Calendar, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 const UserDetails = () => {
@@ -68,13 +69,7 @@ const UserDetails = () => {
       {/* User Profile Card */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <div className="flex items-start gap-6">
-          {user.avatar ? (
-            <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full object-cover" />
-          ) : (
-            <div className={`w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-semibold ${getAvatarColor(user.name)}`}>
-              {getInitials(user.name)}
-            </div>
-          )}
+          <Avatar user={user} className="w-24 h-24 text-3xl" />
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
             <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getRoleClass(user.role)}`}>

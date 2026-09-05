@@ -6,27 +6,32 @@ const {
   createUser,
   updateUser,
   deleteUser,
+  transferSuperAdmin,
   getUserPerformance,
   importUsers,
   exportUsers,
 } = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
+const auditAction = require('../middlewares/auditMiddleware');
 
 // All routes require authentication
 router.use(authMiddleware);
 
-// Get all users (All authenticated users can view, but with different data access)
+// Get all users
 router.get('/', getUsers);
 
-// Create a new user (Admin only)
-router.post('/', roleMiddleware(['Admin']), createUser);
+// Transfer SuperAdmin (SuperAdmin only)
+router.post('/transfer-superadmin', roleMiddleware(['SuperAdmin']), auditAction('UPDATE_ROLE', 'User'), transferSuperAdmin);
 
-// Import users from CSV/Excel (Admin only)
-router.post('/import', roleMiddleware(['Admin']), importUsers);
+// Create a new user (Admin, SuperAdmin)
+router.post('/', roleMiddleware(['Admin', 'SuperAdmin']), auditAction('CREATE', 'User'), createUser);
 
-// Export users to CSV/Excel (Admin only) - Must come before /:id
-router.get('/export', roleMiddleware(['Admin']), exportUsers);
+// Import users from CSV/Excel (Admin, SuperAdmin)
+router.post('/import', roleMiddleware(['Admin', 'SuperAdmin']), importUsers);
+
+// Export users to CSV/Excel (Admin, SuperAdmin)
+router.get('/export', roleMiddleware(['Admin', 'SuperAdmin']), exportUsers);
 
 // Get user by ID
 router.get('/:id', getUserById);
@@ -34,10 +39,10 @@ router.get('/:id', getUserById);
 // Get user performance stats
 router.get('/:id/performance', getUserPerformance);
 
-// Update user (Admin only)
-router.put('/:id', roleMiddleware(['Admin']), updateUser);
+// Update user (Admin, SuperAdmin)
+router.put('/:id', roleMiddleware(['Admin', 'SuperAdmin']), auditAction('UPDATE', 'User'), updateUser);
 
-// Delete user (Admin only)
-router.delete('/:id', roleMiddleware(['Admin']), deleteUser);
+// Delete user (Admin, SuperAdmin)
+router.delete('/:id', roleMiddleware(['Admin', 'SuperAdmin']), auditAction('DELETE', 'User'), deleteUser);
 
 module.exports = router;

@@ -129,7 +129,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Sidebar active state glow */
 .sidebar-active {
-  background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+  background: #2563EB;
   box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
 }
 

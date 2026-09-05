@@ -6,6 +6,7 @@ import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
 import UserForm from '../../components/user/UserForm';
 import { getInitials, getAvatarColor, getRoleLabel, getRoleClass } from '../../utils/helpers';
+import Avatar from '../../components/common/Avatar';
 import { Plus, Search, Edit, Trash2, FileDown, FileSpreadsheet } from 'lucide-react';
 
 const Users = () => {
@@ -159,13 +160,7 @@ const Users = () => {
           <div key={user._id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                {user.avatar ? (
-                  <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
-                ) : (
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-semibold ${getAvatarColor(user.name)}`}>
-                    {getInitials(user.name)}
-                  </div>
-                )}
+                <Avatar user={user} className="w-12 h-12 text-lg" />
                 <div>
                   <h3 className="font-semibold text-gray-900">{user.name}</h3>
                   <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${getRoleClass(user.role)}`}>

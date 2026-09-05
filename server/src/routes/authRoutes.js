@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getMe, updateProfile, changePassword, forgotPassword, resetPassword, generate2FAOTP, verify2FAOTP, disable2FA, getSessions, revokeSession, revokeAllSessions, getActivityLogs, uploadAvatar } = require('../controllers/authController');
+const { register, login, getMe, updateProfile, changePassword, forgotPassword, resetPassword, generate2FAOTP, verify2FAOTP, disable2FA, getSessions, revokeSession, revokeAllSessions, getActivityLogs, uploadAvatar, deleteAccount } = require('../controllers/authController');
 const { protect } = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
@@ -19,5 +19,6 @@ router.delete('/sessions/:sessionId', protect, revokeSession);
 router.post('/sessions/revoke-all', protect, revokeAllSessions);
 router.get('/activity-logs', protect, getActivityLogs);
 router.post('/avatar', protect, upload.single('avatar'), uploadAvatar);
+router.delete('/delete-account', protect, deleteAccount);
 
 module.exports = router;

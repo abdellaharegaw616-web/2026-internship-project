@@ -3,13 +3,14 @@ const Project = require('../models/Project');
 const User = require('../models/User');
 const { sendTaskAssignedEmail, sendDueDateReminderEmail } = require('../services/emailService');
 const { getIO } = require('../config/socket');
+const { createNotification } = require('./notificationController');
 
 // @desc    Get all tasks
 // @route   GET /api/tasks
 // @access  Private
 const getTasks = async (req, res, next) => {
   try {
-    const { project, status, priority, assignedTo, search } = req.query;
+    const { project, status, priority, assignedTo, search, page = 1, limit = 10 } = req.query;
     const query = {};
 
     if (project) query.project = project;
@@ -18,18 +19,42 @@ const getTasks = async (req, res, next) => {
     if (assignedTo) query.assignedTo = assignedTo;
     if (search) query.title = { $regex: search, $options: 'i' };
 
-    // TeamMembers only see their own tasks
     if (req.user.role === 'TeamMember') {
       query.assignedTo = req.user._id;
+    } else if (req.user.role === 'ProjectManager') {
+      const projects = await Project.find({ 'members': req.user._id }).select('_id');
+      const projectIds = projects.map(p => p._id);
+      
+      if (query.project) {
+        if (!projectIds.some(id => id.toString() === query.project.toString())) {
+          return res.status(403).json({ success: false, message: 'Not authorized for this project' });
+        }
+      } else {
+        query.project = { $in: projectIds };
+      }
     }
 
+    const pageNumber = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 10;
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const total = await Task.countDocuments(query);
     const tasks = await Task.find(query)
       .populate('assignedTo', 'name avatar email')
       .populate('project', 'title')
       .populate('createdBy', 'name')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber);
 
-    res.json({ success: true, count: tasks.length, tasks });
+    res.json({ 
+      success: true, 
+      count: tasks.length, 
+      tasks,
+      page: pageNumber,
+      pages: Math.ceil(total / limitNumber),
+      total
+    });
   } catch (error) {
     next(error);
   }
@@ -42,13 +67,24 @@ const getTask = async (req, res, next) => {
   try {
     const task = await Task.findById(req.params.id)
       .populate('assignedTo', 'name avatar email department role')
-      .populate('project', 'title status')
+      .populate('project', 'title status members')
       .populate('createdBy', 'name avatar')
       .populate('comments.user', 'name avatar role')
       .populate('activities.user', 'name avatar');
 
     if (!task) {
       return res.status(404).json({ success: false, message: 'Task not found' });
+    }
+
+    if (req.user.role === 'TeamMember') {
+      if (!task.assignedTo || task.assignedTo._id.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ success: false, message: 'Not authorized to view this task' });
+      }
+    } else if (req.user.role === 'ProjectManager') {
+      const isMember = task.project.members.some(m => m.toString() === req.user._id.toString());
+      if (!isMember) {
+        return res.status(403).json({ success: false, message: 'Not authorized to view tasks in this project' });
+      }
     }
 
     res.json({ success: true, task });
@@ -68,6 +104,13 @@ const createTask = async (req, res, next) => {
     const projectDoc = await Project.findById(project);
     if (!projectDoc) {
       return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    if (req.user.role === 'ProjectManager') {
+      const isMember = projectDoc.members.some(m => m.toString() === req.user._id.toString());
+      if (!isMember) {
+        return res.status(403).json({ success: false, message: 'Not authorized to create tasks in this project' });
+      }
     }
 
     const task = await Task.create({
@@ -100,6 +143,22 @@ const createTask = async (req, res, next) => {
         } catch (emailError) {
           console.error('Failed to send email notification:', emailError);
         }
+      }
+
+      // Create in-app notification
+      try {
+        await createNotification(
+          assignedTo,
+          'task_assigned',
+          'New Task Assigned',
+          `You have been assigned to task "${title}" in project "${projectDoc.title}"`,
+          task._id,
+          'Task',
+          `/tasks/${task._id}`,
+          { projectId: projectDoc._id, projectName: projectDoc.title, dueDate }
+        );
+      } catch (notifError) {
+        console.error('Failed to create notification:', notifError);
       }
     }
 
@@ -135,8 +194,12 @@ const updateTask = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Task not found' });
     }
 
-    // TeamMembers can only update status
+    // TeamMembers can only update status of their OWN assigned tasks
     if (req.user.role === 'TeamMember') {
+      if (!task.assignedTo || task.assignedTo.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ success: false, message: 'Team members can only update their assigned tasks' });
+      }
+
       if (req.body.status && req.body.status !== task.status) {
         task.activities.push({
           action: `Status changed to ${req.body.status}`,
@@ -144,9 +207,22 @@ const updateTask = async (req, res, next) => {
         });
         task.status = req.body.status;
         await task.save();
+        await task.populate([
+          { path: 'assignedTo', select: 'name avatar email' },
+          { path: 'project', select: 'title' },
+          { path: 'createdBy', select: 'name' }
+        ]);
         return res.json({ success: true, task });
       }
       return res.status(403).json({ success: false, message: 'Team members can only update task status' });
+    }
+
+    if (req.user.role === 'ProjectManager') {
+      const project = await Project.findById(task.project);
+      const isMember = project && project.members.some(m => m.toString() === req.user._id.toString());
+      if (!isMember) {
+        return res.status(403).json({ success: false, message: 'Not authorized to update tasks in this project' });
+      }
     }
 
     const { title, description, status, priority, dueDate, assignedTo } = req.body;
@@ -170,6 +246,42 @@ const updateTask = async (req, res, next) => {
       { path: 'assignedTo', select: 'name avatar email' },
       { path: 'project', select: 'title' },
     ]);
+
+    // Create notification if assignee changed
+    if (assignedTo && String(assignedTo) !== String(task.assignedTo)) {
+      try {
+        await createNotification(
+          assignedTo,
+          'task_updated',
+          'Task Assignment Changed',
+          `You have been reassigned to task "${task.title}"`,
+          task._id,
+          'Task',
+          `/tasks/${task._id}`,
+          { projectId: task.project?._id, projectName: task.project?.title }
+        );
+      } catch (notifError) {
+        console.error('Failed to create notification:', notifError);
+      }
+    }
+
+    // Create notification for task status change
+    if (status && status !== task.status) {
+      try {
+        await createNotification(
+          task.assignedTo,
+          'task_updated',
+          'Task Status Updated',
+          `Task "${task.title}" status changed to ${status}`,
+          task._id,
+          'Task',
+          `/tasks/${task._id}`,
+          { projectId: task.project?._id, projectName: task.project?.title, oldStatus: task.status, newStatus: status }
+        );
+      } catch (notifError) {
+        console.error('Failed to create notification:', notifError);
+      }
+    }
 
     // Emit socket event for real-time notification
     try {
@@ -197,6 +309,15 @@ const deleteTask = async (req, res, next) => {
     if (!task) {
       return res.status(404).json({ success: false, message: 'Task not found' });
     }
+
+    if (req.user.role === 'ProjectManager') {
+      const project = await Project.findById(task.project);
+      const isMember = project && project.members.some(m => m.toString() === req.user._id.toString());
+      if (!isMember) {
+        return res.status(403).json({ success: false, message: 'Not authorized to delete tasks in this project' });
+      }
+    }
+
     await task.deleteOne();
 
     // Emit socket event for real-time notification
@@ -244,6 +365,33 @@ const addComment = async (req, res, next) => {
 
     await task.populate('comments.user', 'name avatar role');
     const newComment = task.comments[task.comments.length - 1];
+
+    // Create notification for task comment (notify assignee and task creator if different from commenter)
+    const notifyUsers = [];
+    if (task.assignedTo && String(task.assignedTo) !== String(req.user._id)) {
+      notifyUsers.push(task.assignedTo);
+    }
+    if (task.createdBy && String(task.createdBy) !== String(req.user._id) && String(task.createdBy) !== String(task.assignedTo)) {
+      notifyUsers.push(task.createdBy);
+    }
+
+    for (const userId of notifyUsers) {
+      try {
+        await createNotification(
+          userId,
+          'task_comment',
+          'New Comment on Task',
+          `${req.user.name} commented on task "${task.title}"`,
+          task._id,
+          'Task',
+          `/tasks/${task._id}`,
+          { projectId: task.project?._id, commenter: req.user.name, commentText: text.trim().substring(0, 50) }
+        );
+      } catch (notifError) {
+        console.error('Failed to create notification:', notifError);
+      }
+    }
+
     res.status(201).json({ success: true, comment: newComment });
   } catch (error) {
     next(error);

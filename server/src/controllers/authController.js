@@ -14,14 +14,54 @@ const generateToken = (id) => {
 // @access  Public
 const register = async (req, res, next) => {
   try {
-    const { name, email, password, role, department, phone } = req.body;
+    const { name, email, password, role, department, phone, funFact, superpower, themePreference } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ success: false, message: 'Email already in use' });
     }
 
-    const user = await User.create({ name, email, password, role, department, phone });
+    // Force role to TeamMember for public registration
+    const userRole = 'TeamMember';
+
+    // Set default permissions based on role
+    let userPermissions = [];
+    if (userRole === 'Admin') {
+      userPermissions = [
+        'inviteUsers',
+        'manageUsers',
+        'manageProjects',
+        'manageTasks',
+        'assignTeamMembers',
+        'viewAuditLogs',
+        'sendNotifications',
+        'deleteProjects',
+        'deleteTasks',
+        'deleteUsers'
+      ];
+    } else if (userRole === 'ProjectManager') {
+      userPermissions = [
+        'manageProjects',
+        'manageTasks',
+        'assignTeamMembers',
+        'sendNotifications'
+      ];
+    } else {
+      userPermissions = ['manageTasks'];
+    }
+
+    const user = await User.create({ 
+      name, 
+      email, 
+      password, 
+      role: userRole, 
+      department, 
+      phone, 
+      funFact, 
+      superpower, 
+      themePreference,
+      permissions: userPermissions
+    });
 
     const token = generateToken(user._id);
 
@@ -37,6 +77,10 @@ const register = async (req, res, next) => {
         phone: user.phone,
         avatar: user.avatar,
         isActive: user.isActive,
+        funFact: user.funFact,
+        superpower: user.superpower,
+        themePreference: user.themePreference,
+        permissions: user.permissions,
       },
     });
   } catch (error) {
@@ -119,6 +163,10 @@ const login = async (req, res, next) => {
         phone: user.phone,
         avatar: user.avatar,
         isActive: user.isActive,
+        funFact: user.funFact,
+        superpower: user.superpower,
+        themePreference: user.themePreference,
+        permissions: user.permissions,
       },
     });
   } catch (error) {
@@ -495,4 +543,43 @@ const getActivityLogs = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, getMe, updateProfile, changePassword, forgotPassword, resetPassword, generate2FAOTP, verify2FAOTP, disable2FA, getSessions, revokeSession, revokeAllSessions, getActivityLogs, uploadAvatar };
+// @desc    Delete current user account permanently
+// @route   DELETE /api/auth/delete-account
+// @access  Private
+const deleteAccount = async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    const user = await User.findById(req.user._id).select('+password');
+
+    // Verify password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, message: 'Incorrect password' });
+    }
+
+    // Prevent SuperAdmin from deleting their own account
+    if (user.role === 'SuperAdmin') {
+      return res.status(403).json({ success: false, message: 'SuperAdmin cannot delete their account. Transfer the role first.' });
+    }
+
+    // Revoke all sessions
+    await Session.updateMany({ user: req.user._id }, { isActive: false });
+
+    // Delete user
+    await User.findByIdAndDelete(req.user._id);
+
+    // Log account deletion
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'account_deleted',
+      ipAddress: req.ip || req.connection.remoteAddress,
+      details: { email: user.email },
+    });
+
+    res.json({ success: true, message: 'Account deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { register, login, getMe, updateProfile, changePassword, forgotPassword, resetPassword, generate2FAOTP, verify2FAOTP, disable2FA, getSessions, revokeSession, revokeAllSessions, getActivityLogs, uploadAvatar, deleteAccount };

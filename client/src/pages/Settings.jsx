@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { User, Lock, Save, Eye, EyeOff, Building, Phone, Mail, Shield, CheckCircle, XCircle, Monitor, LogOut, Globe, Clock, History, Camera, Bell, Palette, Info } from 'lucide-react';
+import { User, Lock, Save, Eye, EyeOff, Building, Phone, Mail, Shield, CheckCircle, XCircle, Monitor, LogOut, Globe, Clock, History, Camera, Bell, Palette, Info, AlertTriangle, Trash2 } from 'lucide-react';
 import Header from '../components/layout/Header';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { getInitials, getAvatarColor, getRoleLabel } from '../utils/helpers';
+import Avatar from '../components/common/Avatar';
 
 const TABS = [
   { key: 'profile', label: 'Profile', icon: User },
@@ -14,6 +15,7 @@ const TABS = [
   { key: 'sessions', label: 'Sessions', icon: Monitor },
   { key: 'activity', label: 'Activity', icon: History },
   { key: 'appearance', label: 'Appearance', icon: Palette },
+  { key: 'danger', label: 'Danger Zone', icon: AlertTriangle },
 ];
 
 function formatTimeAgo(date) {
@@ -28,6 +30,7 @@ const ACTION_LABELS = {
   login: 'Logged in', logout: 'Logged out', password_change: 'Changed password',
   profile_update: 'Updated profile', '2fa_enabled': 'Enabled 2FA',
   '2fa_disabled': 'Disabled 2FA', session_revoked: 'Revoked session',
+  account_deleted: 'Account deleted',
 };
 const ACTION_COLORS = {
   login: 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/40',
@@ -37,6 +40,7 @@ const ACTION_COLORS = {
   '2fa_enabled': 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/40',
   '2fa_disabled': 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40',
   session_revoked: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40',
+  account_deleted: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40',
 };
 
 export default function Settings() {
@@ -54,6 +58,8 @@ export default function Settings() {
   const [loadingSessions, setLoadingSessions] = useState(false);
   const [activityLogs, setActivityLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -193,6 +199,26 @@ export default function Settings() {
     finally { setSaving(false); }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) return toast.error('Please enter your password');
+    if (!window.confirm('Are you sure you want to permanently delete your account? This action cannot be undone.')) return;
+    if (!window.confirm('This will delete all your data including projects, tasks, and activity logs. Are you absolutely sure?')) return;
+
+    setDeletingAccount(true);
+    try {
+      await api.delete('/auth/delete-account', { data: { password: deletePassword } });
+      toast.success('Account deleted successfully');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1000);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete account');
+    } finally {
+      setDeletingAccount(false);
+      setDeletePassword('');
+    }
+  };
+
   const cardCls = 'bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6';
   const inputCls = 'w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400';
   const labelCls = 'block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5';
@@ -206,17 +232,7 @@ export default function Settings() {
         <div className={`${cardCls} mb-6`}>
           <div className="flex items-center gap-5">
             <div className="relative">
-              {user?.avatar ? (
-                <img 
-                  src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${user.avatar}`} 
-                  alt={user.name} 
-                  className="w-16 h-16 rounded-2xl object-cover"
-                />
-              ) : (
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-bold ${getAvatarColor(user?.role)}`}>
-                  {getInitials(user?.name)}
-                </div>
-              )}
+              <Avatar user={user} className="w-16 h-16 rounded-2xl text-xl" />
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingAvatar}
@@ -557,6 +573,63 @@ export default function Settings() {
                       </div>
                     </label>
                   ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Danger Zone Tab */}
+        {tab === 'danger' && (
+          <div className={cardCls}>
+            <h3 className={sectionTitle}>Danger Zone</h3>
+            <div className="p-4 bg-red-50 dark:bg-red-950/20 border-2 border-red-200 dark:border-red-900/50 rounded-xl">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-950/60 flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle size={24} className="text-red-600 dark:text-red-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-bold text-red-900 dark:text-red-300 mb-2">Delete Account Permanently</h4>
+                  <p className="text-sm text-red-700 dark:text-red-400 mb-4">
+                    Once you delete your account, there is no going back. Please be certain.
+                  </p>
+                  <ul className="text-sm text-red-700 dark:text-red-400 mb-4 space-y-1">
+                    <li>• All your personal data will be permanently deleted</li>
+                    <li>• Your projects and tasks will be removed</li>
+                    <li>• Activity logs will be erased</li>
+                    <li>• You will be logged out from all devices</li>
+                  </ul>
+                  {user?.role === 'SuperAdmin' && (
+                    <div className="p-3 bg-red-100 dark:bg-red-950/40 border border-red-300 dark:border-red-800 rounded-lg mb-4">
+                      <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+                        ⚠️ SuperAdmin accounts cannot be deleted directly. Transfer the SuperAdmin role to another user first.
+                      </p>
+                    </div>
+                  )}
+                  <div className="space-y-3">
+                    <div>
+                      <label className={labelCls}>Confirm with password</label>
+                      <div className="relative">
+                        <Lock size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                          type="password"
+                          value={deletePassword}
+                          onChange={(e) => setDeletePassword(e.target.value)}
+                          placeholder="Enter your password to confirm"
+                          disabled={user?.role === 'SuperAdmin' || deletingAccount}
+                          className="w-full pl-11 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-red-300 dark:border-red-800 rounded-xl text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleDeleteAccount}
+                      disabled={user?.role === 'SuperAdmin' || deletingAccount || !deletePassword}
+                      className="flex items-center gap-2 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 size={16} />
+                      {deletingAccount ? 'Deleting Account...' : 'Delete My Account Permanently'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

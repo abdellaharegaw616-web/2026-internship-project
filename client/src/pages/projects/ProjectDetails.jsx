@@ -10,6 +10,7 @@ import TaskForm from '../../components/task/TaskForm';
 import TaskCard from '../../components/task/TaskCard';
 import TaskComment from '../../components/task/TaskComment';
 import { getProjectStatusClass, formatDate, getDaysRemaining, getInitials, getAvatarColor } from '../../utils/helpers';
+import Avatar from '../../components/common/Avatar';
 import { ArrowLeft, Plus, Users, Calendar, TrendingUp, Edit, Trash2 } from 'lucide-react';
 
 const ProjectDetails = () => {
@@ -194,17 +195,7 @@ const ProjectDetails = () => {
             <h3 className="text-sm font-medium text-gray-700 mb-3">Team Members</h3>
             <div className="flex -space-x-2">
               {project.members.slice(0, 5).map((member) => (
-                <div
-                  key={member._id}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold border-2 border-white ${getAvatarColor(member.name)}`}
-                  title={member.name}
-                >
-                  {member.avatar ? (
-                    <img src={member.avatar} alt={member.name} className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    getInitials(member.name)
-                  )}
-                </div>
+                <Avatar key={member._id} user={member} className="w-10 h-10 border-2 border-white text-sm" />
               ))}
               {project.members.length > 5 && (
                 <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-sm font-medium border-2 border-white">
@@ -299,13 +290,7 @@ const ProjectDetails = () => {
                   {project.members.map((member) => (
                     <div key={member._id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3">
-                        {member.avatar ? (
-                          <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full object-cover" />
-                        ) : (
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold ${getAvatarColor(member.name)}`}>
-                            {getInitials(member.name)}
-                          </div>
-                        )}
+                        <Avatar user={member} className="w-10 h-10 text-sm" />
                         <div>
                           <p className="font-medium text-gray-900">{member.name}</p>
                           <p className="text-sm text-gray-500">{member.role === 'ProjectManager' ? 'Project Manager' : member.role}</p>

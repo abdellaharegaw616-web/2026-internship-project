@@ -4,6 +4,7 @@ const Task = require('../models/Task');
 const User = require('../models/User');
 const { sendProjectCreatedEmail } = require('../services/emailService');
 const { getIO } = require('../config/socket');
+const { createNotification } = require('./notificationController');
 const path = require('path');
 const fs = require('fs');
 
@@ -33,7 +34,7 @@ const getTeamMembers = async (req, res, next) => {
 // @access  Private
 const getProjects = async (req, res, next) => {
   try {
-    const { status, priority, search, archived } = req.query;
+    const { status, priority, search, archived, page = 1, limit = 10 } = req.query;
     const query = {};
 
     if (archived === 'true') {
@@ -46,18 +47,32 @@ const getProjects = async (req, res, next) => {
     if (priority) query.priority = priority;
     if (search) query.title = { $regex: search, $options: 'i' };
 
-    if (req.user.role === 'TeamMember') {
+    if (req.user.role === 'TeamMember' || req.user.role === 'ProjectManager') {
       query.members = req.user._id;
     }
 
+    const pageNumber = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 10;
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const total = await Project.countDocuments(query);
     const projects = await Project.find(query)
       .populate('members', 'name avatar email role')
       .populate('createdBy', 'name')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber);
 
     const projectsWithProgress = await Promise.all(projects.map(attachProgress));
 
-    res.json({ success: true, count: projects.length, projects: projectsWithProgress });
+    res.json({ 
+      success: true, 
+      count: projects.length, 
+      projects: projectsWithProgress,
+      page: pageNumber,
+      pages: Math.ceil(total / limitNumber),
+      total
+    });
   } catch (error) {
     next(error);
   }
@@ -77,6 +92,14 @@ const getProject = async (req, res, next) => {
 
     if (!project) {
       return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    // RBAC: Check if ProjectManager or TeamMember is assigned to this project
+    if (req.user.role === 'ProjectManager' || req.user.role === 'TeamMember') {
+      const isMember = project.members.some(member => member._id.toString() === req.user._id.toString());
+      if (!isMember) {
+        return res.status(403).json({ success: false, message: 'Not authorized to access this project' });
+      }
     }
 
     const tasks = await Task.find({ project: project._id })
@@ -143,6 +166,24 @@ const createProject = async (req, res, next) => {
             await sendProjectCreatedEmail(member.email, title, description);
           } catch (emailError) {
             console.error('Failed to send email notification:', emailError);
+          }
+        }
+
+        // Create in-app notification for project members
+        if (String(memberId) !== String(req.user._id)) {
+          try {
+            await createNotification(
+              memberId,
+              'project_invited',
+              'Added to Project',
+              `You have been added to project "${title}"`,
+              project._id,
+              'Project',
+              `/projects/${project._id}`,
+              { projectName: title, createdBy: req.user.name }
+            );
+          } catch (notifError) {
+            console.error('Failed to create notification:', notifError);
           }
         }
       }
@@ -327,6 +368,13 @@ const updateProject = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Project not found' });
     }
 
+    if (req.user.role === 'ProjectManager') {
+      const isMember = project.members.some(m => m.toString() === req.user._id.toString());
+      if (!isMember) {
+        return res.status(403).json({ success: false, message: 'Not authorized to update this project' });
+      }
+    }
+
     const {
       title, description, status, priority, startDate, endDate, members,
       estimatedBudget, milestones,
@@ -348,8 +396,33 @@ const updateProject = async (req, res, next) => {
     if (estimatedBudget !== undefined) project.estimatedBudget = estimatedBudget;
     if (milestones) project.milestones = milestones;
     if (members) {
+      const oldMembers = project.members || [];
+      const newMembers = members;
+      const addedMembers = newMembers.filter(m => !oldMembers.includes(m));
+      const removedMembers = oldMembers.filter(m => !newMembers.includes(m));
+
       project.members = members;
       project.activities.push({ action: 'Team members updated', user: req.user._id });
+
+      // Create notifications for newly added members
+      for (const memberId of addedMembers) {
+        if (String(memberId) !== String(req.user._id)) {
+          try {
+            await createNotification(
+              memberId,
+              'project_invited',
+              'Added to Project',
+              `You have been added to project "${project.title}"`,
+              project._id,
+              'Project',
+              `/projects/${project._id}`,
+              { projectName: project.title, addedBy: req.user.name }
+            );
+          } catch (notifError) {
+            console.error('Failed to create notification:', notifError);
+          }
+        }
+      }
     }
 
     await project.save();

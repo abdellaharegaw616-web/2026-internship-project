@@ -8,6 +8,7 @@ import StatCard from '../../components/dashboard/StatCard';
 import TaskChart from '../../components/dashboard/TaskChart';
 import ProjectChart from '../../components/dashboard/ProjectChart';
 import { getInitials, getAvatarColor, formatDate, getDaysRemaining } from '../../utils/helpers';
+import Avatar from '../../components/common/Avatar';
 import { FolderKanban, CheckSquare, Users, TrendingUp, Calendar, AlertCircle } from 'lucide-react';
 
 const Dashboard = () => {
@@ -259,13 +260,7 @@ const Dashboard = () => {
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-3">
-                  {task.assignedTo?.avatar ? (
-                    <img src={task.assignedTo.avatar} alt={task.assignedTo.name} className="w-8 h-8 rounded-full object-cover" />
-                  ) : (
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold ${getAvatarColor(task.assignedTo?.name)}`}>
-                      {getInitials(task.assignedTo?.name)}
-                    </div>
-                  )}
+                  <Avatar user={task.assignedTo} className="w-8 h-8 text-xs" />
                   <div>
                     <p className="font-medium text-gray-900">{task.title}</p>
                     <p className="text-xs text-gray-500">{task.project?.name || 'No project'}</p>

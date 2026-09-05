@@ -30,6 +30,7 @@ const auditLogRoutes = require('./routes/auditLogRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const backupRoutes = require('./routes/backupRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const invitationRoutes = require('./routes/invitationRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const { initializeSocket } = require('./config/socket');
 
@@ -44,7 +45,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 mins
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 5000,
   message: 'Too many requests from this IP, please try again after 15 minutes'
 });
 app.use('/api', limiter);
@@ -96,6 +97,7 @@ app.use('/api/audit-logs', auditLogRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/backup', backupRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/invitations', invitationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

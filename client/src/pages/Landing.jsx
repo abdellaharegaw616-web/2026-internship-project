@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FolderKanban, CheckSquare, Target, ArrowRight, LogIn, UserPlus } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import LogoMark from '../components/LogoMark';
 
 export default function Landing() {
   const { darkMode } = useTheme();
@@ -12,9 +13,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <FolderKanban className="w-5 h-5 text-white" />
-              </div>
+              <LogoMark size={32} className="shrink-0" />
               <div>
                 <h1 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`} style={{ fontFamily: 'Poppins, sans-serif' }}>
                   Task Flow

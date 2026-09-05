@@ -9,13 +9,13 @@ const xlsx = require('xlsx');
 // @route   GET /api/users
 // @access  Private
 const getUsers = asyncHandler(async (req, res) => {
-  const { role, search } = req.query;
+  const { role, search, page = 1, limit = 10 } = req.query;
   const currentUser = req.user;
   
   let query = {};
   
   // Apply role filter if provided (Admin/PM only)
-  if (role && (currentUser.role === 'Admin' || currentUser.role === 'ProjectManager')) {
+  if (role && (currentUser.role === 'Admin' || currentUser.role === 'ProjectManager' || currentUser.role === 'SuperAdmin')) {
     query.role = role;
   }
   
@@ -27,7 +27,16 @@ const getUsers = asyncHandler(async (req, res) => {
     ];
   }
   
-  let users = await User.find(query).select('-password').sort({ createdAt: -1 });
+  const pageNumber = parseInt(page, 10) || 1;
+  const limitNumber = parseInt(limit, 10) || 10;
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const total = await User.countDocuments(query);
+  let users = await User.find(query)
+    .select('-password')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNumber);
   
   // Team Members get limited view - only name, avatar, department
   if (currentUser.role === 'TeamMember') {
@@ -40,21 +49,55 @@ const getUsers = asyncHandler(async (req, res) => {
     }));
   }
   
-  res.json(users);
+  res.json({
+    users,
+    page: pageNumber,
+    pages: Math.ceil(total / limitNumber),
+    total
+  });
 });
 
 // @desc    Get user by ID
 // @route   GET /api/users/:id
 // @access  Private
 const getUserById = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id).select('-password');
+  const user = await User.findById(req.params.id).populate('department', 'name').select('-password');
   
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
+
+  const Task = require('../models/Task');
+  const Project = require('../models/Project');
+
+  const tasks = await Task.find({ assignedTo: req.params.id });
+  const completedTasks = tasks.filter(t => t.status === 'Done').length;
+  const pendingTasks = tasks.filter(t => t.status !== 'Done').length;
   
-  res.json(user);
+  const stats = {
+    assignedTasks: tasks.length,
+    completedTasks,
+    pendingTasks,
+    performance: tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0,
+  };
+
+  const assignedProjects = await Project.find({ members: req.params.id })
+    .select('title status')
+    .sort({ createdAt: -1 })
+    .limit(10);
+
+  const recentTasks = await Task.find({ assignedTo: req.params.id })
+    .select('title priority status')
+    .sort({ createdAt: -1 })
+    .limit(5);
+  
+  res.json({
+    member: user,
+    stats,
+    assignedProjects,
+    recentTasks
+  });
 });
 
 // @desc    Update user
@@ -70,6 +113,35 @@ const updateUser = asyncHandler(async (req, res) => {
   
   const { name, email, role, department, phone, status } = req.body;
   
+  // Hierarchy guard for updates
+  if (req.user.role === 'Admin' && user.role === 'SuperAdmin') {
+    res.status(403);
+    throw new Error('Admins cannot modify the SuperAdmin.');
+  }
+
+  // SuperAdmin role management guard
+  if (role && role !== user.role) {
+    if (role === 'SuperAdmin') {
+      res.status(403);
+      throw new Error('Cannot promote to SuperAdmin directly. Use the transfer function.');
+    }
+    if (req.user.role === 'Admin' && role === 'Admin') {
+      res.status(403);
+      throw new Error('Admins cannot promote users to Admin.');
+    }
+    if (user.role === 'SuperAdmin') {
+      res.status(403);
+      throw new Error('Cannot demote a SuperAdmin directly. Use the transfer function.');
+    }
+    if (role === 'SuperAdmin') {
+      const existingSuper = await User.findOne({ role: 'SuperAdmin' });
+      if (existingSuper) {
+        res.status(400);
+        throw new Error('Only one SuperAdmin is allowed in the system.');
+      }
+    }
+  }
+
   user.name = name || user.name;
   user.email = email || user.email;
   user.role = role || user.role;
@@ -101,9 +173,49 @@ const deleteUser = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('User not found');
   }
+
+  if (user.role === 'SuperAdmin') {
+    res.status(403);
+    throw new Error('Cannot delete a SuperAdmin. Transfer the role first.');
+  }
   
   await user.deleteOne();
   res.json({ message: 'User removed' });
+});
+
+// @desc    Transfer SuperAdmin role
+// @route   POST /api/users/transfer-superadmin
+// @access  Private/SuperAdmin
+const transferSuperAdmin = asyncHandler(async (req, res) => {
+  const { targetUserId } = req.body;
+  const currentUserId = req.user._id;
+
+  if (req.user.role !== 'SuperAdmin') {
+    res.status(403);
+    throw new Error('Only the current SuperAdmin can transfer this role.');
+  }
+
+  if (!targetUserId) {
+    res.status(400);
+    throw new Error('Please specify a target user to transfer to.');
+  }
+
+  const targetUser = await User.findById(targetUserId);
+  if (!targetUser) {
+    res.status(404);
+    throw new Error('Target user not found.');
+  }
+
+  // Demote current SuperAdmin to Admin
+  const currentUser = await User.findById(currentUserId);
+  currentUser.role = 'Admin';
+  await currentUser.save();
+
+  // Promote target user to SuperAdmin
+  targetUser.role = 'SuperAdmin';
+  await targetUser.save();
+
+  res.json({ message: 'SuperAdmin privileges transferred successfully' });
 });
 
 // @desc    Get user performance stats
@@ -158,7 +270,7 @@ const importUsers = asyncHandler(async (req, res) => {
       .on('data', (data) => results.push(data))
       .on('end', async () => {
         users = results;
-        await processImport(users, res);
+        await processImport(users, res, req.user);
       })
       .on('error', (error) => {
         res.status(400);
@@ -171,14 +283,14 @@ const importUsers = asyncHandler(async (req, res) => {
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     users = xlsx.utils.sheet_to_json(worksheet);
-    await processImport(users, res);
+    await processImport(users, res, req.user);
   } else {
     res.status(400);
     throw new Error('Invalid format. Use csv or excel');
   }
 });
 
-const processImport = async (users, res) => {
+const processImport = async (users, res, currentUser) => {
   const bcrypt = require('bcryptjs');
   const results = {
     success: 0,
@@ -195,6 +307,22 @@ const processImport = async (users, res) => {
         results.failed++;
         results.errors.push({ email, error: 'Name and email are required' });
         continue;
+      }
+
+      // Enforce hierarchy
+      const targetRole = role || 'TeamMember';
+      if (currentUser.role === 'Admin' && (targetRole === 'SuperAdmin' || targetRole === 'Admin')) {
+        results.failed++;
+        results.errors.push({ email, error: 'Admins cannot import SuperAdmin or Admin users.' });
+        continue;
+      }
+      if (targetRole === 'SuperAdmin') {
+        const existingSuper = await User.findOne({ role: 'SuperAdmin' });
+        if (existingSuper) {
+          results.failed++;
+          results.errors.push({ email, error: 'Only one SuperAdmin is allowed.' });
+          continue;
+        }
       }
 
       // Check if user already exists
@@ -292,6 +420,20 @@ const createUser = asyncHandler(async (req, res) => {
     throw new Error('Please add all required fields: name, email, password');
   }
 
+  if (role === 'SuperAdmin') {
+    const existingSuper = await User.findOne({ role: 'SuperAdmin' });
+    if (existingSuper) {
+      res.status(400);
+      throw new Error('Only one SuperAdmin is allowed in the system.');
+    }
+  }
+
+  // Role creation hierarchy guard
+  if (req.user.role === 'Admin' && (role === 'SuperAdmin' || role === 'Admin')) {
+    res.status(403);
+    throw new Error('Admins cannot create SuperAdmin or Admin users.');
+  }
+
   // Check if user already exists
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -344,6 +486,7 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  transferSuperAdmin,
   getUserPerformance,
   importUsers,
   exportUsers,

@@ -4,6 +4,7 @@ import { ArrowLeft, Mail, Phone, Building, Calendar, Award, CheckSquare, Clock, 
 import Header from '../components/layout/Header';
 import api from '../api/axios';
 import { getInitials, getAvatarColor, getRoleLabel, getRoleClass, getProjectStatusClass, getTaskStatusClass, getPriorityClass, formatDate } from '../utils/helpers';
+import Avatar from '../components/common/Avatar';
 import toast from 'react-hot-toast';
 
 function CircleProgress({ value }) {
@@ -67,13 +68,7 @@ export default function MemberProfile() {
         {/* Profile Card */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            {member.avatar ? (
-              <img src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${member.avatar}`} alt={member.name} className="w-20 h-20 rounded-2xl object-cover" />
-            ) : (
-              <div className={`w-20 h-20 rounded-2xl flex items-center justify-center text-white text-2xl font-bold ${getAvatarColor(member.role)}`}>
-                {getInitials(member.name)}
-              </div>
-            )}
+            <Avatar user={member} className="w-20 h-20 rounded-2xl text-2xl" />
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h2 className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Poppins, sans-serif' }}>{member.name}</h2>
@@ -93,7 +88,7 @@ export default function MemberProfile() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Building size={14} className="text-blue-500" />
-                  {member.department || '—'}
+                  {member.department?.name || member.department || '—'}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-500">
                   <Calendar size={14} className="text-blue-500" />

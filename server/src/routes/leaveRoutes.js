@@ -24,8 +24,8 @@ router.route('/:id')
   .put(protect, updateLeave)
   .delete(protect, deleteLeave);
 
-router.put('/:id/approve', protect, authorize('Admin', 'ProjectManager'), approveLeave);
-router.put('/:id/reject', protect, authorize('Admin', 'ProjectManager'), rejectLeave);
+router.put('/:id/approve', protect, authorize('SuperAdmin', 'Admin', 'ProjectManager'), approveLeave);
+router.put('/:id/reject', protect, authorize('SuperAdmin', 'Admin', 'ProjectManager'), rejectLeave);
 router.put('/:id/cancel', protect, cancelLeave);
 
 module.exports = router;

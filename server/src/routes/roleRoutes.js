@@ -11,7 +11,7 @@ const {
 const { protect, authorize } = require('../middlewares/auth');
 
 router.use(protect);
-router.use(authorize('Admin'));
+router.use(authorize('SuperAdmin', 'Admin'));
 
 router.get('/', getRoles);
 router.post('/initialize', initializeDefaultRoles);

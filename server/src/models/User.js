@@ -23,8 +23,24 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['Admin', 'ProjectManager', 'TeamMember'],
+      enum: ['SuperAdmin', 'Admin', 'ProjectManager', 'TeamMember'],
       default: 'TeamMember',
+    },
+    permissions: {
+      type: [String],
+      enum: [
+        'inviteUsers',
+        'manageUsers',
+        'manageProjects',
+        'manageTasks',
+        'assignTeamMembers',
+        'viewAuditLogs',
+        'sendNotifications',
+        'deleteProjects',
+        'deleteTasks',
+        'deleteUsers'
+      ],
+      default: [],
     },
     department: {
       type: String,
@@ -38,6 +54,19 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
       default: '',
+    },
+    funFact: {
+      type: String,
+      default: '',
+    },
+    superpower: {
+      type: String,
+      default: '',
+    },
+    themePreference: {
+      type: String,
+      enum: ['light', 'dark', 'system'],
+      default: 'system',
     },
     isActive: {
       type: Boolean,

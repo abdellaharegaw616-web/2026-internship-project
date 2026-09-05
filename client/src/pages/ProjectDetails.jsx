@@ -14,6 +14,7 @@ import {
   formatDate, getDaysRemaining, getInitials, getAvatarColor, timeAgo,
   formatCurrency, formatFileSize
 } from '../utils/helpers';
+import Avatar from '../components/common/Avatar';
 import toast from 'react-hot-toast';
 
 function CircleProgress({ value }) {
@@ -330,9 +331,7 @@ export default function ProjectDetails() {
                     <p className="text-sm text-slate-400">No team members assigned</p>
                   ) : project.members.map(m => (
                     <div key={m._id} className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${getAvatarColor(m.name)}`}>
-                        {getInitials(m.name)}
-                      </div>
+                      <Avatar user={m} className="w-8 h-8 text-xs" />
                       <div>
                         <p className="text-sm font-medium text-slate-700">{m.name}</p>
                         <p className="text-xs text-slate-400">{m.role === 'ProjectManager' ? 'Project Manager' : m.role}</p>
@@ -374,9 +373,7 @@ export default function ProjectDetails() {
                       <p className="text-sm font-medium text-slate-800 truncate">{t.title}</p>
                       {t.assignedTo && (
                         <div className="flex items-center gap-1.5 mt-1">
-                          <div className={`w-4 h-4 rounded-full flex items-center justify-center text-white text-[10px] ${getAvatarColor(t.assignedTo?.name)}`}>
-                            {getInitials(t.assignedTo?.name)}
-                          </div>
+                          <Avatar user={t.assignedTo} className="w-4 h-4 text-[8px]" />
                           <span className="text-xs text-slate-400">{t.assignedTo?.name}</span>
                         </div>
                       )}

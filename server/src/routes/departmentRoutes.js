@@ -11,11 +11,11 @@ const { protect, authorize } = require('../middlewares/auth');
 
 router.route('/')
   .get(protect, getDepartments)
-  .post(protect, authorize('Admin'), createDepartment);
+  .post(protect, authorize('SuperAdmin', 'Admin'), createDepartment);
 
 router.route('/:id')
   .get(protect, getDepartment)
-  .put(protect, authorize('Admin'), updateDepartment)
-  .delete(protect, authorize('Admin'), deleteDepartment);
+  .put(protect, authorize('SuperAdmin', 'Admin'), updateDepartment)
+  .delete(protect, authorize('SuperAdmin', 'Admin'), deleteDepartment);
 
 module.exports = router;

@@ -5,6 +5,7 @@ import taskService from '../../services/taskService';
 import { getTaskStatusClass, getPriorityClass, formatDate, isOverdue, getDaysRemaining, getInitials, getAvatarColor, timeAgo } from '../../utils/helpers';
 import Button from '../../components/common/Button';
 import Modal from '../../components/common/Modal';
+import Avatar from '../../components/common/Avatar';
 import TaskForm from '../../components/task/TaskForm';
 import TaskComment from '../../components/task/TaskComment';
 import { ArrowLeft, Edit, Trash2, Calendar, Clock, User, MessageSquare, Paperclip } from 'lucide-react';
@@ -290,13 +291,7 @@ const TaskDetails = () => {
           <div className="space-y-3">
             {task.activities.slice().reverse().map((activity) => (
               <div key={activity._id} className="flex items-start gap-3 text-sm">
-                {activity.user?.avatar ? (
-                  <img src={activity.user.avatar} alt={activity.user.name} className="w-8 h-8 rounded-full object-cover" />
-                ) : (
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold ${getAvatarColor(activity.user?.name)}`}>
-                    {getInitials(activity.user?.name)}
-                  </div>
-                )}
+                <Avatar user={activity.user} className="w-8 h-8 text-xs" />
                 <div className="flex-1">
                   <p className="text-gray-700">
                     <span className="font-medium">{activity.user?.name}</span> {activity.action}

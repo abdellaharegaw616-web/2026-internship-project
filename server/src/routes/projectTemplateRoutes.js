@@ -12,7 +12,7 @@ router.use(protect);
 
 router.get('/', getTemplates);
 router.get('/:id', getTemplate);
-router.post('/', authorize('Admin', 'ProjectManager'), createTemplate);
-router.delete('/:id', authorize('Admin'), deleteTemplate);
+router.post('/', authorize('SuperAdmin', 'Admin', 'ProjectManager'), createTemplate);
+router.delete('/:id', authorize('SuperAdmin', 'Admin'), deleteTemplate);
 
 module.exports = router;

@@ -7,6 +7,7 @@ import {
   getTaskStatusClass, getPriorityClass, formatDate, getInitials,
   getAvatarColor, isOverdue, timeAgo, formatFileSize
 } from '../utils/helpers';
+import Avatar from '../components/common/Avatar';
 import toast from 'react-hot-toast';
 
 const STATUSES = ['Todo', 'In Progress', 'Review', 'Done'];
@@ -147,9 +148,7 @@ function TaskDrawer({ taskId, onClose, onUpdate, onDelete, canManage }) {
                   <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 mb-1">Assigned To</p>
                   {data.task.assignedTo ? (
                     <div className="flex items-center gap-2">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${getAvatarColor(data.task.assignedTo?.role)}`}>
-                        {getInitials(data.task.assignedTo?.name)}
-                      </div>
+                      <Avatar user={data.task.assignedTo} className="w-6 h-6 text-[10px]" />
                       <span className="text-slate-700 dark:text-slate-300">{data.task.assignedTo?.name}</span>
                     </div>
                   ) : <span className="text-slate-400 dark:text-slate-500">Unassigned</span>}
@@ -223,9 +222,7 @@ function TaskDrawer({ taskId, onClose, onUpdate, onDelete, canManage }) {
                   )}
                   {(data.task.comments || []).map(c => (
                     <div key={c._id} className="flex gap-3">
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 ${getAvatarColor(c.user?.role)}`}>
-                        {getInitials(c.user?.name)}
-                      </div>
+                      <Avatar user={c.user} className="w-7 h-7 text-xs flex-shrink-0" />
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">{c.user?.name}</span>
@@ -388,14 +385,26 @@ export default function Tasks() {
   const [editTask, setEditTask] = useState(null);
   const { canManage } = useAuth();
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+
   const fetchTasks = async () => {
     try {
-      const params = {};
+      setLoading(true);
+      const params = { page, limit: 10 };
       if (search) params.search = search;
       if (statusFilter) params.status = statusFilter;
       if (priorityFilter) params.priority = priorityFilter;
       const { data } = await api.get('/tasks', { params });
-      setTasks(data.tasks);
+      
+      if (data.tasks) {
+        setTasks(data.tasks);
+        setTotalPages(data.pages || 1);
+        setTotalItems(data.total || data.count);
+      } else {
+        setTasks(data || []);
+      }
     } catch {
       toast.error('Failed to load tasks');
     } finally {
@@ -403,7 +412,9 @@ export default function Tasks() {
     }
   };
 
-  useEffect(() => { fetchTasks(); }, [search, statusFilter, priorityFilter]);
+  useEffect(() => { fetchTasks(); }, [search, statusFilter, priorityFilter, page]);
+
+  useEffect(() => { setPage(1); }, [search, statusFilter, priorityFilter]);
 
   useEffect(() => {
     api.get('/projects').then(({ data }) => setProjects(data.projects || [])).catch(() => {});
@@ -496,7 +507,7 @@ export default function Tasks() {
                             t.priority === 'Medium' ? 'bg-blue-500' : 'bg-slate-300'
                           }`} />
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-slate-800 dark:text-slate-100 line-clamp-1">{t.title}</p>
+                           <p className="text-sm font-medium text-slate-800 dark:text-slate-100 line-clamp-1">{t.title}</p>
                             {t.description && <p className="text-xs text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">{t.description}</p>}
                           </div>
                         </div>
@@ -505,9 +516,7 @@ export default function Tasks() {
                       <td className="px-5 py-4">
                         {t.assignedTo ? (
                           <div className="flex items-center gap-2">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold ${getAvatarColor(t.assignedTo?.role)}`}>
-                              {getInitials(t.assignedTo?.name)}
-                            </div>
+                            <Avatar user={t.assignedTo} className="w-7 h-7 text-xs" />
                             <span className="text-sm text-slate-700 dark:text-slate-300">{t.assignedTo?.name}</span>
                           </div>
                         ) : <span className="text-sm text-slate-400 dark:text-slate-500">—</span>}
@@ -536,8 +545,29 @@ export default function Tasks() {
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 flex items-center justify-between">
-            <span>{tasks.length} task{tasks.length !== 1 ? 's' : ''} found</span>
+          <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 flex items-center justify-between bg-slate-50 dark:bg-slate-900">
+            <span>{totalItems} task{totalItems !== 1 ? 's' : ''} found</span>
+            
+            {totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="text-xs">Page {page} of {totalPages}</span>
+                <button 
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+
             {(statusFilter || priorityFilter || search) && (
               <button onClick={() => { setSearch(''); setStatusFilter(''); setPriorityFilter(''); }}
                 className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">

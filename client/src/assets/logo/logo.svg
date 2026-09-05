@@ -1,0 +1,9 @@
+<svg width="420" height="120" viewBox="0 0 420 120" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(-10, -35) scale(0.9)">
+    <path d="M 45,55 L 75,55 L 95,15 L 165,15 L 155,35 L 115,35 L 72,121 Q 70,125 68,121 L 55,95 L 65,75 L 35,75 Z" fill="#2C85C5" />
+    <path d="M 120,55 L 165,55 L 155,75 L 140,75 L 90,175 Q 85,185 80,175 L 40,95 L 70,95 L 85,125 Z" fill="#0F172A" />
+  </g>
+  <text x="160" y="75" font-family="Poppins, sans-serif" font-weight="700" font-size="52" fill="#0F172A">
+    Task<tspan fill="#2C85C5">Flow</tspan>
+  </text>
+</svg>

@@ -12,15 +12,15 @@ const initializeSocket = (server) => {
   });
 
   io.on('connection', (socket) => {
-    console.log('Client connected:', socket.id);
+    // console.log('Client connected:', socket.id);
 
     socket.on('join-room', (userId) => {
       socket.join(userId);
-      console.log(`User ${userId} joined their room`);
+      // console.log(`User ${userId} joined their room`);
     });
 
     socket.on('disconnect', () => {
-      console.log('Client disconnected:', socket.id);
+      // console.log('Client disconnected:', socket.id);
     });
   });
 

@@ -31,9 +31,9 @@ router.use(protect);
 
 router.get('/', getTasks);
 router.get('/:id', getTask);
-router.post('/', authorize('Admin', 'ProjectManager'), createTask);
+router.post('/', authorize('SuperAdmin', 'Admin', 'ProjectManager'), createTask);
 router.put('/:id', updateTask);
-router.delete('/:id', authorize('Admin', 'ProjectManager'), deleteTask);
+router.delete('/:id', authorize('SuperAdmin', 'Admin', 'ProjectManager'), deleteTask);
 
 // Comments
 router.post('/:id/comments', addComment);

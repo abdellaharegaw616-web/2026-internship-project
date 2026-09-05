@@ -2,7 +2,9 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getInitials, getAvatarColor } from '../../utils/helpers';
+import Avatar from '../common/Avatar';
 import { LogOut, Zap } from 'lucide-react';
+import LogoMark from '../LogoMark';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -26,9 +28,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600">
-            <Zap size={20} className="text-white" />
-          </div>
+          <LogoMark size={40} className="shrink-0" />
           <div>
             <h1 className="text-xl font-bold text-gray-800">Task Flow</h1>
             <p className="text-xs text-gray-500">Project Management</p>
@@ -57,13 +57,7 @@ const Navbar = () => {
           {user ? (
             <>
               <div className="flex items-center gap-3">
-                {user?.avatar ? (
-                  <img src={user.avatar} alt={user.name} className="w-9 h-9 rounded-full object-cover" />
-                ) : (
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold ${getAvatarColor(user?.name)}`}>
-                    {getInitials(user?.name)}
-                  </div>
-                )}
+                <Avatar user={user} className="w-9 h-9" />
                 <div className="hidden md:block">
                   <p className="text-sm font-medium text-gray-800">{user?.name}</p>
                   <p className="text-xs text-gray-500">{user?.role === 'ProjectManager' ? 'Project Manager' : user?.role}</p>

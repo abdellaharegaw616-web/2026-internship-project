@@ -36,12 +36,54 @@ export const AuthProvider = ({ children }) => {
     setUser(merged);
   };
 
-  const isAdmin = user?.role === 'Admin';
+  const isSuperAdmin = user?.role === 'SuperAdmin';
+  const isAdmin = user?.role === 'Admin' || isSuperAdmin;
   const isProjectManager = user?.role === 'ProjectManager';
   const canManage = isAdmin || isProjectManager;
 
+  const PERMISSIONS = {
+    MANAGE_USERS: 'MANAGE_USERS',
+    MANAGE_ADMINS: 'MANAGE_ADMINS',
+    MANAGE_PROJECTS: 'MANAGE_PROJECTS',
+    MANAGE_SETTINGS: 'MANAGE_SETTINGS',
+    VIEW_AUDIT_LOGS: 'VIEW_AUDIT_LOGS',
+    MANAGE_BILLING: 'MANAGE_BILLING',
+    MANAGE_TASKS: 'MANAGE_TASKS',
+    MANAGE_TEAMS: 'MANAGE_TEAMS',
+  };
+
+  const ROLE_PERMISSIONS = {
+    SuperAdmin: Object.values(PERMISSIONS),
+    Admin: [
+      PERMISSIONS.MANAGE_USERS,
+      PERMISSIONS.MANAGE_PROJECTS,
+      PERMISSIONS.MANAGE_SETTINGS,
+      PERMISSIONS.VIEW_AUDIT_LOGS,
+      PERMISSIONS.MANAGE_BILLING,
+      PERMISSIONS.MANAGE_TASKS,
+      PERMISSIONS.MANAGE_TEAMS,
+    ],
+    ProjectManager: [
+      PERMISSIONS.MANAGE_PROJECTS,
+      PERMISSIONS.MANAGE_TASKS,
+      PERMISSIONS.MANAGE_TEAMS,
+    ],
+    TeamMember: [
+      PERMISSIONS.MANAGE_TASKS,
+    ],
+  };
+
+  const hasPermission = (permission) => {
+    if (!user || !user.role) return false;
+    return ROLE_PERMISSIONS[user.role]?.includes(permission) || false;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, updateUser, isAdmin, isProjectManager, canManage }}>
+    <AuthContext.Provider value={{ 
+      user, loading, login, logout, updateUser, 
+      isSuperAdmin, isAdmin, isProjectManager, canManage, 
+      hasPermission, PERMISSIONS 
+    }}>
       {children}
     </AuthContext.Provider>
   );

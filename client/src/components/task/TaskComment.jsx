@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { timeAgo, getInitials, getAvatarColor } from '../../utils/helpers';
+import Avatar from '../common/Avatar';
 import Button from '../common/Button';
 import { Send, Trash2 } from 'lucide-react';
 
@@ -37,17 +38,7 @@ const TaskComment = ({ comments, onAddComment, onDeleteComment, currentUserId })
         ) : (
           comments.map((comment) => (
             <div key={comment._id} className="flex gap-3 p-3 bg-gray-50 rounded-lg">
-              {comment.user?.avatar ? (
-                <img
-                  src={comment.user.avatar}
-                  alt={comment.user.name}
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                />
-              ) : (
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0 ${getAvatarColor(comment.user?.name)}`}>
-                  {getInitials(comment.user?.name)}
-                </div>
-              )}
+              <Avatar user={comment.user} className="w-8 h-8 text-xs flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-medium text-gray-900 text-sm">{comment.user?.name}</span>
