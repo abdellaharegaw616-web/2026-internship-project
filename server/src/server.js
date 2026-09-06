@@ -67,9 +67,27 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 }
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://2026-internship-project.vercel.app'
+];
+
+if (process.env.CLIENT_URL) {
+  const clientUrls = process.env.CLIENT_URL.split(',').map(url => url.trim());
+  allowedOrigins.push(...clientUrls);
+}
+
 // CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1 && !origin.includes('vercel.app')) {
+      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }));
 
