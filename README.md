@@ -913,7 +913,346 @@ tail -f server/logs/combined.log
 tail -f server/logs/error.log
 ```
 
-## 📝 License
+## � Deployment Guide
+
+### Deployment Overview
+
+This application uses a split deployment strategy:
+- **Frontend (React)**: Deployed on Vercel
+- **Backend (Node.js/Express)**: Deployed on Render
+- **Database**: MongoDB Atlas (cloud-hosted)
+- **File Storage**: Cloudinary (cloud-hosted)
+- **Email**: Gmail SMTP (optional)
+
+### Prerequisites for Production
+
+#### 1. MongoDB Atlas Account
+- Free tier account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+- Create a cluster (M0 free tier recommended)
+- Create database user with username/password
+- Whitelist all IP addresses (0.0.0.0/0) for cloud deployment
+- Get connection string
+
+#### 2. Cloudinary Account (for image uploads)
+- Free tier account at [Cloudinary](https://cloudinary.com)
+- Get API Key, API Secret, and Cloud Name from dashboard
+- Enable unsigned uploads or configure upload presets
+
+#### 3. Gmail Account (for email notifications - optional)
+- Gmail account with 2-Step Verification enabled
+- Generate App Password from Google Account settings
+- Use App Password (not regular password)
+
+#### 4. Vercel Account (for frontend)
+- Free account at [Vercel](https://vercel.com)
+- Connect to GitHub repository
+
+#### 5. Render Account (for backend)
+- Free tier account at [Render](https://render.com)
+- Connect to GitHub repository
+
+---
+
+### Frontend Deployment (Vercel)
+
+#### Step 1: Prepare Frontend for Deployment
+
+**Update `client/.env` for production:**
+```env
+VITE_API_URL=https://your-backend-api.onrender.com
+```
+
+**Create `client/vercel.json` (optional for custom configuration):**
+```json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+```
+
+#### Step 2: Deploy to Vercel
+
+1. **Push code to GitHub**
+   ```bash
+   git add .
+   git commit -m "Ready for deployment"
+   git push origin main
+   ```
+
+2. **Import project in Vercel**
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Click "Add New Project"
+   - Import your GitHub repository
+   - Select the `client` folder as root directory
+   - Configure settings:
+     - **Framework Preset**: Vite
+     - **Root Directory**: `./client`
+     - **Build Command**: `npm run build`
+     - **Output Directory**: `dist`
+
+3. **Add Environment Variables**
+   - Go to Project Settings → Environment Variables
+   - Add: `VITE_API_URL` = `https://your-backend-api.onrender.com`
+
+4. **Deploy**
+   - Click "Deploy"
+   - Wait for build to complete
+   - Your frontend will be live at `https://your-project.vercel.app`
+
+---
+
+### Backend Deployment (Render)
+
+#### Step 1: Prepare Backend for Production
+
+**Update `server/package.json` (ensure start script):**
+```json
+{
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  }
+}
+```
+
+**Create `server/.env` for production (add these to Render, not commit):**
+```env
+# MongoDB Atlas Connection
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/taskflow?retryWrites=true&w=majority
+
+# JWT Configuration
+JWT_SECRET=your_secure_jwt_secret_key_minimum_32_characters
+JWT_EXPIRE=7d
+
+# Server Configuration
+PORT=5000
+NODE_ENV=production
+
+# Client URL (your Vercel frontend)
+CLIENT_URL=https://your-project.vercel.app
+
+# Email Configuration (optional)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_SECURE=false
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_gmail_app_password
+EMAIL_FROM=noreply@taskflow.com
+
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
+#### Step 2: Deploy to Render
+
+1. **Push code to GitHub**
+   ```bash
+   git add .
+   git commit -m "Ready for backend deployment"
+   git push origin main
+   ```
+
+2. **Create Web Service on Render**
+   - Go to [Render Dashboard](https://dashboard.render.com)
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository
+   - Configure settings:
+     - **Name**: `taskflow-api` (or your preferred name)
+     - **Root Directory**: `./server`
+     - **Build Command**: `npm install`
+     - **Start Command**: `node src/server.js`
+     - **Environment**: Node
+     - **Region**: Choose nearest region
+     - **Instance Type**: Free (or paid for better performance)
+
+3. **Add Environment Variables**
+   - Go to Environment section in Render dashboard
+   - Add all variables from `.env` above:
+     - `MONGODB_URI`
+     - `JWT_SECRET`
+     - `CLIENT_URL`
+     - `EMAIL_USER`, `EMAIL_PASS` (if using email)
+     - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+
+4. **Deploy**
+   - Click "Create Web Service"
+   - Wait for deployment to complete
+   - Your backend will be live at `https://taskflow-api.onrender.com`
+
+5. **Get Backend URL**
+   - Copy the URL from Render dashboard
+   - Update `client/.env` and Vercel environment variable with this URL
+   - Redeploy frontend on Vercel
+
+---
+
+### MongoDB Atlas Setup
+
+#### Step 1: Create Cluster
+1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a free account
+3. Click "Build a Database"
+4. Choose "M0 Free" cluster (512MB storage)
+5. Select a region (choose closest to your Render region)
+
+#### Step 2: Configure Network Access
+1. Go to Network Access → IP Access List
+2. Click "Add IP Address"
+3. Select "Allow Access from Anywhere" (0.0.0.0/0)
+4. This is required for Render deployment
+
+#### Step 3: Create Database User
+1. Go to Database Access → MongoDB Users
+2. Click "Create Database User"
+3. Set username and password (save these!)
+4. Choose "Read and write to any database"
+5. Click "Create User"
+
+#### Step 4: Get Connection String
+1. Go to Database → Connect
+2. Choose "Connect your application"
+3. Select Node.js version
+4. Copy the connection string
+5. Replace `<password>` with your database user password
+6. Use this as `MONGODB_URI` in Render environment variables
+
+---
+
+### Cloudinary Setup (for Image Uploads)
+
+#### Step 1: Create Account
+1. Go to [Cloudinary](https://cloudinary.com)
+2. Sign up for free account
+3. Verify email address
+
+#### Step 2: Get Credentials
+1. Go to Dashboard
+2. Copy:
+   - **Cloud Name** (e.g., `abc123`)
+   - **API Key** (e.g., `123456789012345`)
+   - **API Secret** (e.g., `abcdefghijklmnopqrstuvwxyz123456`)
+
+#### Step 3: Configure in Render
+1. Add these to Render environment variables:
+   - `CLOUDINARY_CLOUD_NAME`
+   - `CLOUDINARY_API_KEY`
+   - `CLOUDINARY_API_SECRET`
+
+---
+
+### Email Configuration (Optional)
+
+#### Step 1: Enable Gmail App Password
+1. Go to [Google Account Security](https://myaccount.google.com/security)
+2. Enable 2-Step Verification (if not enabled)
+3. Search for "App Passwords"
+4. Create new App Password (name it "TaskFlow")
+5. Copy the 16-character password
+
+#### Step 2: Configure in Render
+1. Add these to Render environment variables:
+   - `EMAIL_USER` = your Gmail address
+   - `EMAIL_PASS` = the App Password (not regular password)
+   - `EMAIL_HOST` = `smtp.gmail.com`
+   - `EMAIL_PORT` = `587`
+   - `EMAIL_SECURE` = `false`
+
+---
+
+### Post-Deployment Checklist
+
+- [ ] Frontend deployed on Vercel
+- [ ] Backend deployed on Render
+- [ ] MongoDB Atlas cluster created and connected
+- [ ] Cloudinary configured for image uploads
+- [ ] Email configured (if using email features)
+- [ ] Environment variables set in both Vercel and Render
+- [ ] Frontend `VITE_API_URL` points to backend URL
+- [ ] Backend `CLIENT_URL` points to frontend URL
+- [ ] Test user registration
+- [ ] Test login functionality
+- [ ] Test file uploads (avatars, project images)
+- [ ] Test email notifications (if configured)
+- [ ] Test real-time features (Socket.io)
+- [ ] Verify all API endpoints are accessible
+
+---
+
+### Troubleshooting Deployment Issues
+
+**Issue: Frontend can't connect to backend**
+- Verify `VITE_API_URL` in Vercel environment variables
+- Check backend is running on Render
+- Ensure CORS is configured correctly in backend
+- Check Render logs for errors
+
+**Issue: MongoDB connection fails**
+- Verify `MONGODB_URI` is correct in Render
+- Check IP whitelist in MongoDB Atlas (should be 0.0.0.0/0)
+- Ensure database user credentials are correct
+- Check MongoDB Atlas cluster status
+
+**Issue: File uploads failing**
+- Verify Cloudinary credentials in Render
+- Check Cloudinary account status
+- Ensure file size limits are appropriate
+- Check Render logs for upload errors
+
+**Issue: Email not sending**
+- Verify Gmail App Password (not regular password)
+- Check 2-Step Verification is enabled
+- Ensure email credentials are correct in Render
+- Check if email service is blocked by Render
+
+**Issue: Socket.io not working**
+- Ensure backend is using WebSocket-compatible hosting
+- Check if Render supports WebSockets (paid tier may be required)
+- Verify Socket.io client configuration
+- Check firewall/network settings
+
+---
+
+### Cost Summary (Free Tier)
+
+| Service | Free Tier Limit | Cost |
+|---------|----------------|------|
+| Vercel (Frontend) | 100GB bandwidth/month | Free |
+| Render (Backend) | 750 hours/month, 512MB RAM | Free |
+| MongoDB Atlas | 512MB storage | Free |
+| Cloudinary | 25GB storage/month, 25GB bandwidth/month | Free |
+| Gmail SMTP | Limited daily emails | Free |
+
+**Total Monthly Cost: $0 (Free Tier)**
+
+**Note:** Free tiers have limitations. For production use with high traffic, consider upgrading to paid plans.
+
+---
+
+### Security Best Practices for Production
+
+1. **Never commit `.env` files** to version control
+2. **Use strong, unique secrets** for JWT and API keys
+3. **Enable HTTPS** (automatic on Vercel and Render)
+4. **Regularly update dependencies** for security patches
+5. **Monitor logs** for suspicious activity
+6. **Implement rate limiting** (already included in backend)
+7. **Use environment-specific configurations**
+8. **Regular database backups** (MongoDB Atlas automated backups)
+9. **Restrict API access** with proper authentication
+10. **Keep MongoDB Atlas IP whitelist** updated if needed
+
+---
+
+## �📝 License
 
 This project is licensed under the MIT License.
 
