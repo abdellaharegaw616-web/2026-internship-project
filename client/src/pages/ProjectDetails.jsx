@@ -189,7 +189,7 @@ export default function ProjectDetails() {
   return (
     <div className="page-enter">
       <Header title={project.title} subtitle="Project details and task overview" />
-      <div className="p-8 space-y-6">
+      <div className="p-4 md:p-8 space-y-6">
         <button onClick={() => navigate('/projects')}
           className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800">
           <ArrowLeft size={16} /> Back to Projects
