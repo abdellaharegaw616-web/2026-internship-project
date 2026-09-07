@@ -227,7 +227,7 @@ export default function Settings() {
   return (
     <div className="page-enter">
       <Header title="Settings" subtitle="Manage your account and preferences" />
-      <div className="p-8 max-w-3xl">
+      <div className="p-4 md:p-8 max-w-3xl">
         {/* Profile Banner */}
         <div className={`${cardCls} mb-6`}>
           <div className="flex items-center gap-5">

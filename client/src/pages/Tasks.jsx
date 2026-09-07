@@ -449,7 +449,7 @@ export default function Tasks() {
   return (
     <div className="page-enter">
       <Header title="Tasks" subtitle="Manage and track all tasks across your projects" />
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <div className="flex-1 relative">
@@ -468,7 +468,7 @@ export default function Tasks() {
           {canManage && (
             <button
               onClick={() => { setEditTask(null); setShowModal(true); }}
-              className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl whitespace-nowrap"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl whitespace-nowrap"
               style={{ background: 'linear-gradient(135deg, #2563EB, #3B82F6)', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
               <Plus size={16} /> New Task
             </button>
@@ -477,12 +477,12 @@ export default function Tasks() {
 
         {/* Table */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto min-w-full">
+            <table className="w-full min-w-[800px]">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
                   {['Task Name', 'Project', 'Assigned To', 'Status', 'Priority', 'Due Date', ...(canManage ? ['Actions'] : [])].map(col => (
-                    <th key={col} className="text-left px-5 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{col}</th>
+                    <th key={col} className="text-left px-5 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{col}</th>
                   ))}
                 </tr>
               </thead>
@@ -507,30 +507,30 @@ export default function Tasks() {
                             t.priority === 'Medium' ? 'bg-blue-500' : 'bg-slate-300'
                           }`} />
                           <div className="min-w-0">
-                           <p className="text-sm font-medium text-slate-800 dark:text-slate-100 line-clamp-1">{t.title}</p>
+                           <p className="text-sm font-medium text-slate-800 dark:text-slate-100 line-clamp-1 whitespace-nowrap">{t.title}</p>
                             {t.description && <p className="text-xs text-slate-400 dark:text-slate-500 line-clamp-1 mt-0.5">{t.description}</p>}
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-sm text-slate-500 dark:text-slate-400">{t.project?.title || '—'}</td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4 text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">{t.project?.title || '—'}</td>
+                      <td className="px-5 py-4 whitespace-nowrap">
                         {t.assignedTo ? (
                           <div className="flex items-center gap-2">
-                            <Avatar user={t.assignedTo} className="w-7 h-7 text-xs" />
+                            <Avatar user={t.assignedTo} className="w-7 h-7 text-xs flex-shrink-0" />
                             <span className="text-sm text-slate-700 dark:text-slate-300">{t.assignedTo?.name}</span>
                           </div>
                         ) : <span className="text-sm text-slate-400 dark:text-slate-500">—</span>}
                       </td>
                       <td className="px-5 py-4"><span className={getTaskStatusClass(t.status)}>{t.status}</span></td>
                       <td className="px-5 py-4"><span className={getPriorityClass(t.priority)}>{t.priority}</span></td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <p className={`text-sm ${overdue ? 'text-red-500 font-medium' : 'text-slate-600 dark:text-slate-400'}`}>
                           {formatDate(t.dueDate)}
                         </p>
                         {overdue && <p className="text-xs text-red-400 flex items-center gap-1 mt-0.5"><AlertTriangle size={10} /> Overdue</p>}
                       </td>
                       {canManage && (
-                        <td className="px-5 py-4">
+                        <td className="px-5 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
                             <button onClick={(e) => openEdit(e, t)}
                               className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20 rounded-lg transition-colors">
@@ -545,7 +545,7 @@ export default function Tasks() {
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 flex items-center justify-between bg-slate-50 dark:bg-slate-900">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 dark:bg-slate-900">
             <span>{totalItems} task{totalItems !== 1 ? 's' : ''} found</span>
             
             {totalPages > 1 && (

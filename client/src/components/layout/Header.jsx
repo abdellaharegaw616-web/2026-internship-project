@@ -1,4 +1,4 @@
-import { Bell, Search, X, FileText, Folder, User as UserIcon } from 'lucide-react';
+import { Bell, Search, X, FileText, Folder, User as UserIcon, Menu } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { getInitials, getAvatarColor } from '../../utils/helpers';
@@ -110,9 +110,17 @@ export default function Header({ title, subtitle }) {
 
   return (
     <header className="flex items-center justify-between px-4 md:px-8 py-4 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-900/60 sticky top-0 z-10 transition-colors duration-200">
-      <div className="min-w-0 flex-1">
-        <h2 className="text-lg md:text-xl font-bold text-slate-800 dark:text-slate-100 font-heading leading-tight truncate">{title}</h2>
-        {subtitle && <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5 truncate">{subtitle}</p>}
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <button 
+          onClick={() => document.dispatchEvent(new CustomEvent('toggle-sidebar'))}
+          className="lg:hidden p-2 -ml-2 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+        >
+          <Menu size={20} />
+        </button>
+        <div className="min-w-0">
+          <h2 className="text-lg md:text-xl font-bold text-slate-800 dark:text-slate-100 font-heading leading-tight truncate">{title}</h2>
+          {subtitle && <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5 truncate">{subtitle}</p>}
+        </div>
       </div>
 
       <div className="flex items-center gap-2 md:gap-3 shrink-0">

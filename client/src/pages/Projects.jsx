@@ -402,7 +402,7 @@ export default function Projects() {
   return (
     <div className="page-enter">
       <Header title="Projects" subtitle="Track all projects and their progress" />
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <div className="flex-1 relative">
             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -419,13 +419,13 @@ export default function Projects() {
           </select>
           <button
             onClick={() => setShowArchived(!showArchived)}
-            className={`flex items-center gap-2 px-4 py-2.5 border rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${showArchived ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'}`}>
+            className={`flex items-center justify-center gap-2 px-4 py-2.5 border rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${showArchived ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'}`}>
             <Archive size={15} /> {showArchived ? 'Archived' : 'Active'}
           </button>
           {canManage && (
             <button
               onClick={() => { setEditProject(null); setShowModal(true); }}
-              className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl whitespace-nowrap"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl whitespace-nowrap"
               style={{ background: 'linear-gradient(135deg, #2563EB, #3B82F6)', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
               <Plus size={16} /> New Project
             </button>
@@ -433,12 +433,12 @@ export default function Projects() {
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto min-w-full">
+            <table className="w-full min-w-[800px]">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
                   {['Project Name', 'Status', 'Priority', 'Progress', 'Budget', 'End Date', 'Team', 'Actions'].map(col => (
-                    <th key={col} className="text-left px-5 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{col}</th>
+                    <th key={col} className="text-left px-5 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{col}</th>
                   ))}
                 </tr>
               </thead>
@@ -458,7 +458,7 @@ export default function Projects() {
                   return (
                     <tr key={p._id} className="table-row-hover" onClick={() => navigate(`/projects/${p._id}`)}>
                       <td className="px-5 py-4">
-                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{p.title}</p>
+                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">{p.title}</p>
                         <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-1">{p.description}</p>
                       </td>
                       <td className="px-5 py-4"><span className={getProjectStatusClass(p.status)}>{p.status}</span></td>
@@ -471,13 +471,13 @@ export default function Projects() {
                           <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 w-8">{p.progress}%</span>
                         </div>
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <p className="text-sm text-slate-600 dark:text-slate-400">{formatCurrency(p.estimatedBudget || 0)}</p>
                         {p.actualCost > 0 && (
                           <p className="text-xs text-slate-400 dark:text-slate-500">Spent: {formatCurrency(p.actualCost)}</p>
                         )}
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <p className="text-sm text-slate-600 dark:text-slate-400">{formatDate(p.endDate)}</p>
                         {days !== null && !p.isArchived && (
                           <p className={`text-xs mt-0.5 ${days < 0 ? 'text-red-500' : days <= 7 ? 'text-orange-500' : 'text-slate-400 dark:text-slate-500'}`}>
@@ -497,7 +497,7 @@ export default function Projects() {
                           )}
                         </div>
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
                           {canManage && (
                             <>
@@ -533,7 +533,7 @@ export default function Projects() {
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-3 border-t border-slate-100 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 flex items-center justify-between bg-slate-50 dark:bg-slate-900">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 text-sm text-slate-500 dark:text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50 dark:bg-slate-900">
             <span>{totalItems} project{totalItems !== 1 ? 's' : ''} found</span>
             
             {totalPages > 1 && (

@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, FolderKanban, CheckSquare, Users,
-  Settings, LogOut, ChevronRight, Zap, Moon, Sun
+  Settings, LogOut, ChevronRight, Zap, Moon, Sun, X
 } from 'lucide-react';
 import LogoMark from '../LogoMark';
 import { useAuth } from '../../context/AuthContext';
@@ -30,12 +30,20 @@ export default function Sidebar() {
   return (
     <aside className="w-64 h-screen bg-white dark:bg-slate-950 border-r border-slate-100 dark:border-slate-900/60 flex flex-col sticky top-0 left-0 flex-shrink-0 overflow-hidden transition-colors duration-200">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 h-[60px] border-b border-slate-100 dark:border-slate-900/60 flex-shrink-0">
-        <LogoMark size={32} className="shrink-0" />
-        <div>
-          <h1 className="text-sm font-bold text-slate-900 dark:text-white font-heading leading-tight tracking-tight">Task Flow</h1>
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Project Management</p>
+      <div className="flex items-center justify-between px-6 h-[60px] border-b border-slate-100 dark:border-slate-900/60 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <LogoMark size={32} className="shrink-0" />
+          <div>
+            <h1 className="text-sm font-bold text-slate-900 dark:text-white font-heading leading-tight tracking-tight">Task Flow</h1>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Project Management</p>
+          </div>
         </div>
+        <button 
+          onClick={() => document.dispatchEvent(new CustomEvent('close-sidebar'))}
+          className="lg:hidden p-1.5 -mr-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+        >
+          <X size={20} />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -47,6 +55,7 @@ export default function Sidebar() {
           <NavLink
             key={to}
             to={to}
+            onClick={() => document.dispatchEvent(new CustomEvent('close-sidebar'))}
             className={({ isActive }) => 
               `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 relative group
               ${isActive 

@@ -175,7 +175,7 @@ export default function Dashboard() {
   return (
     <div className="page-enter">
       <Header title="Dashboard" subtitle={getGreeting(user?.name)} />
-      <div className="p-8 space-y-8">
+      <div className="p-4 md:p-8 space-y-6 md:space-y-8">
         {/* Top bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>

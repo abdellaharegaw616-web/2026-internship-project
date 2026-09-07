@@ -304,7 +304,7 @@ export default function Team() {
   return (
     <div className="page-enter">
       <Header title="Team" subtitle="Manage your team members and invitations" />
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         
         {/* Tabs */}
         <div className="flex border-b border-slate-200 dark:border-slate-700 mb-6">
@@ -340,8 +340,8 @@ export default function Team() {
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <div className="flex-1 relative">
+        <div className="flex flex-col sm:flex-row gap-3 mb-6 overflow-x-auto pb-2 sm:pb-0">
+          <div className="flex-1 relative min-w-[200px]">
             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..."
               className="w-full pl-11 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400" />
@@ -362,7 +362,7 @@ export default function Team() {
           )}
           
           <PermissionGuard permission={PERMISSIONS.MANAGE_USERS}>
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <button onClick={() => setShowModal(true)}
                 className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl whitespace-nowrap transition-all"
                 style={{ background: 'linear-gradient(135deg, #2563EB, #3B82F6)', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
@@ -387,12 +387,12 @@ export default function Team() {
         {/* Members Table */}
         {activeTab === 'members' && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto min-w-full">
+              <table className="w-full min-w-[800px]">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
                     {['Member', 'Role', 'Department', 'Status', 'Actions'].map(col => (
-                      <th key={col} className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{col}</th>
+                      <th key={col} className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{col}</th>
                     ))}
                   </tr>
                 </thead>
@@ -408,21 +408,21 @@ export default function Team() {
                     <tr key={m._id} className="table-row-hover" onClick={() => navigate(`/users/${m._id}`)}>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <Avatar user={m} className="w-9 h-9 ring-2 ring-slate-100 dark:ring-slate-700" />
+                          <Avatar user={m} className="w-9 h-9 ring-2 ring-slate-100 dark:ring-slate-700 flex-shrink-0" />
                           <div>
-                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{m.name}</p>
-                            <p className="text-xs text-slate-400 dark:text-slate-500">{m.email}</p>
+                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">{m.name}</p>
+                            <p className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">{m.email}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4"><span className={getRoleClass(m.role)}>{getRoleLabel(m.role)}</span></td>
-                      <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{m.department?.name || '—'}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap"><span className={getRoleClass(m.role)}>{getRoleLabel(m.role)}</span></td>
+                      <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">{m.department?.name || '—'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`badge ${m.isActive !== false ? 'badge-done' : 'badge-urgent'}`}>
                           {m.isActive !== false ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
                           <button onClick={() => navigate(`/users/${m._id}`)}
                             className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-950/20 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-colors" title="View profile">
@@ -455,12 +455,12 @@ export default function Team() {
         {/* Invitations Table */}
         {activeTab === 'invitations' && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto min-w-full">
+              <table className="w-full min-w-[800px]">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
                     {['Email', 'Role', 'Status', 'Invited By', 'Date', 'Actions'].map(col => (
-                      <th key={col} className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{col}</th>
+                      <th key={col} className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{col}</th>
                     ))}
                   </tr>
                 </thead>
