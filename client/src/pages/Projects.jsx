@@ -295,7 +295,7 @@ function ProjectModal({ project, onClose, onSave, members, templates }) {
 
 // ─── Main Projects Page ────────────────────────────────────────────────────────
 export default function Projects() {
-  const [allProjects, setAllProjects] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [members, setMembers] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -309,18 +309,24 @@ export default function Projects() {
   const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      // Fetch all projects (large limit) to do filtering on the client side
-      const params = { archived: showArchived ? 'true' : 'false', limit: 1000 };
+      const params = { archived: showArchived ? 'true' : 'false', page, limit: 10 };
+      if (search) params.search = search;
+      if (statusFilter) params.status = statusFilter;
+      if (priorityFilter) params.priority = priorityFilter;
       const { data } = await api.get('/projects', { params });
       
       if (data.projects) {
-        setAllProjects(data.projects);
+        setProjects(data.projects);
+        setTotalPages(data.pages || 1);
+        setTotalItems(data.total || data.count);
       } else {
-        setAllProjects(data || []);
+        setProjects(data || []);
       }
     } catch {
       toast.error('Failed to load projects');
@@ -329,20 +335,9 @@ export default function Projects() {
     }
   };
 
-  useEffect(() => { fetchProjects(); }, [showArchived]);
+  useEffect(() => { fetchProjects(); }, [search, statusFilter, priorityFilter, showArchived, page]);
 
   useEffect(() => { setPage(1); }, [search, statusFilter, priorityFilter, showArchived]);
-
-  const filteredProjects = allProjects.filter(p => {
-    if (statusFilter && p.status !== statusFilter) return false;
-    if (priorityFilter && p.priority !== priorityFilter) return false;
-    if (search && !p.title.toLowerCase().includes(search.toLowerCase()) && !p.description?.toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
-  });
-
-  const totalItems = filteredProjects.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / 10));
-  const projects = filteredProjects.slice((page - 1) * 10, page * 10);
 
   useEffect(() => {
     api.get('/projects/team/members').then(({ data }) => setMembers(data.members || [])).catch(() => {});
@@ -354,7 +349,7 @@ export default function Projects() {
     if (!window.confirm('Delete this project and all its tasks? This cannot be undone.')) return;
     try {
       await api.delete(`/projects/${id}`);
-      setAllProjects(allProjects.filter(p => p._id !== id));
+      setProjects(projects.filter(p => p._id !== id));
       toast.success('Project deleted');
     } catch {
       toast.error('Failed to delete');
@@ -382,7 +377,7 @@ export default function Projects() {
         await api.put(`/projects/${id}/archive`);
         toast.success('Project archived');
       }
-      setAllProjects(allProjects.filter(p => p._id !== id));
+      setProjects(projects.filter(p => p._id !== id));
     } catch {
       toast.error('Archive action failed');
     }
@@ -390,9 +385,9 @@ export default function Projects() {
 
   const handleSave = (project, isEdit) => {
     if (isEdit) {
-      setAllProjects(ps => ps.map(p => p._id === project._id ? { ...p, ...project } : p));
+      setProjects(ps => ps.map(p => p._id === project._id ? { ...p, ...project } : p));
     } else {
-      setAllProjects(ps => [project, ...ps]);
+      setProjects(ps => [project, ...ps]);
     }
   };
 

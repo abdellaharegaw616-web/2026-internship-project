@@ -74,10 +74,10 @@ export default function ProjectDetails() {
 
   const handleUpdate = async () => {
     try {
-      const { data: res } = await api.put(`/projects/${id}`, editForm);
+      const { data: responseData } = await api.put(`/projects/${id}`, editForm);
       setData(prev => ({
         ...prev,
-        project: res.project
+        project: { ...prev.project, ...responseData.project }
       }));
       setEditing(false);
       toast.success('Project updated!');
@@ -121,34 +121,22 @@ export default function ProjectDetails() {
     try {
       const { data: res } = await api.post(`/projects/${id}/milestones`, newMilestone);
       setNewMilestone({ title: '', dueDate: '' });
-      setData(prev => ({ ...prev, project: res.project }));
+      setData(prev => ({ ...prev, project: { ...prev.project, milestones: res.milestones } }));
       toast.success('Milestone added');
     } catch { toast.error('Failed to add milestone'); }
   };
 
   const toggleMilestone = async (milestoneId, completed) => {
     try {
-      await api.put(`/projects/${id}/milestones/${milestoneId}`, { completed: !completed });
-      setData(prev => ({
-        ...prev,
-        project: {
-          ...prev.project,
-          milestones: prev.project.milestones.map(m => m._id === milestoneId ? { ...m, completed: !completed } : m)
-        }
-      }));
+      const { data: res } = await api.put(`/projects/${id}/milestones/${milestoneId}`, { completed: !completed });
+      setData(prev => ({ ...prev, project: { ...prev.project, milestones: res.milestones } }));
     } catch { toast.error('Failed to update milestone'); }
   };
 
   const deleteMilestone = async (milestoneId) => {
     try {
-      await api.delete(`/projects/${id}/milestones/${milestoneId}`);
-      setData(prev => ({
-        ...prev,
-        project: {
-          ...prev.project,
-          milestones: prev.project.milestones.filter(m => m._id !== milestoneId)
-        }
-      }));
+      const { data: res } = await api.delete(`/projects/${id}/milestones/${milestoneId}`);
+      setData(prev => ({ ...prev, project: { ...prev.project, milestones: res.milestones } }));
       toast.success('Milestone removed');
     } catch { toast.error('Failed to delete milestone'); }
   };
@@ -159,7 +147,15 @@ export default function ProjectDetails() {
     try {
       const { data: res } = await api.post(`/projects/${id}/costs`, { ...costForm, amount: parseFloat(costForm.amount) });
       setCostForm({ description: '', amount: '', category: 'General' });
-      setData(prev => ({ ...prev, project: res.project }));
+      setData(prev => ({
+        ...prev,
+        project: {
+          ...prev.project,
+          actualCost: res.actualCost,
+          costEntries: res.costEntries,
+          budgetVariance: res.budgetVariance
+        }
+      }));
       toast.success('Cost entry added');
     } catch { toast.error('Failed to add cost'); }
   };
@@ -173,7 +169,10 @@ export default function ProjectDetails() {
       const { data: res } = await api.post(`/projects/${id}/attachments`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setData(prev => ({ ...prev, project: res.project }));
+      setData(prev => ({
+        ...prev,
+        project: { ...prev.project, attachments: [...(prev.project.attachments || []), res.attachment] }
+      }));
       toast.success('File uploaded');
     } catch { toast.error('Upload failed'); }
     e.target.value = '';
@@ -184,10 +183,7 @@ export default function ProjectDetails() {
       await api.delete(`/projects/${id}/attachments/${attachmentId}`);
       setData(prev => ({
         ...prev,
-        project: {
-          ...prev.project,
-          attachments: prev.project.attachments.filter(a => a._id !== attachmentId)
-        }
+        project: { ...prev.project, attachments: (prev.project.attachments || []).filter(a => a._id !== attachmentId) }
       }));
       toast.success('File removed');
     } catch { toast.error('Delete failed'); }
