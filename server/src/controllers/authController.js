@@ -65,6 +65,47 @@ const register = async (req, res, next) => {
 
     const token = generateToken(user._id);
 
+    // Create session (auto-login after registration)
+    const userAgent = req.headers['user-agent'] || '';
+    const ipAddress = req.ip || req.connection.remoteAddress;
+    
+    // Parse user agent for device/browser info
+    const device = userAgent.includes('Mobile') ? 'Mobile' : 'Desktop';
+    let browser = 'Unknown';
+    let os = 'Unknown';
+
+    if (userAgent.includes('Chrome')) browser = 'Chrome';
+    else if (userAgent.includes('Firefox')) browser = 'Firefox';
+    else if (userAgent.includes('Safari')) browser = 'Safari';
+    else if (userAgent.includes('Edge')) browser = 'Edge';
+
+    if (userAgent.includes('Windows')) os = 'Windows';
+    else if (userAgent.includes('Mac')) os = 'macOS';
+    else if (userAgent.includes('Linux')) os = 'Linux';
+    else if (userAgent.includes('Android')) os = 'Android';
+    else if (userAgent.includes('iOS')) os = 'iOS';
+
+    await Session.create({
+      user: user._id,
+      token,
+      device,
+      browser,
+      os,
+      ipAddress,
+      lastActivity: new Date(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    });
+
+    // Log registration activity
+    await ActivityLog.create({
+      user: user._id,
+      action: 'login', // Log as login to reflect the auto-login
+      ipAddress,
+      device,
+      browser,
+      os,
+    });
+
     res.status(201).json({
       success: true,
       token,

@@ -7,6 +7,7 @@ import {
 import LogoMark from '../components/LogoMark';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 
 /* ─── Password strength helper ─────────────────────────────────────────── */
 function getPasswordStrength(password) {
@@ -67,6 +68,7 @@ export default function Register() {
   const [agreedToTerms, setAgreedToTerms]       = useState(false);
   const [loading, setLoading]                   = useState(false);
   const [error, setError]                       = useState('');
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -97,14 +99,14 @@ export default function Register() {
       /* RBAC: role is always hardcoded to 'TeamMember' on the client.
          The server should also enforce this, but we never send 'Admin' from
          a public registration form. */
-      await api.post('/auth/register', {
+      await register({
         name:     form.name,
         email:    form.email,
         password: form.password,
         role:     'TeamMember',       // ← RBAC guard: public users cannot self-assign Admin
       });
-      toast.success('Account created! Please sign in. 🎉');
-      navigate('/login');
+      toast.success('Account created successfully! 🎉');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {

@@ -24,6 +24,14 @@ export const AuthProvider = ({ children }) => {
     return data.user;
   };
 
+  const register = async (userData) => {
+    const { data } = await api.post('/auth/register', userData);
+    localStorage.setItem('taskflow_token', data.token);
+    localStorage.setItem('taskflow_user', JSON.stringify(data.user));
+    setUser(data.user);
+    return data.user;
+  };
+
   const logout = () => {
     localStorage.removeItem('taskflow_token');
     localStorage.removeItem('taskflow_user');
@@ -80,7 +88,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ 
-      user, loading, login, logout, updateUser, 
+      user, loading, login, register, logout, updateUser, 
       isSuperAdmin, isAdmin, isProjectManager, canManage, 
       hasPermission, PERMISSIONS 
     }}>
