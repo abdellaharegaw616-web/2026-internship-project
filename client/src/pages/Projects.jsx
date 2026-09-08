@@ -450,7 +450,11 @@ export default function Projects() {
                     <FolderKanban size={40} className="mx-auto mb-3 opacity-30" />
                     <p className="font-medium">{showArchived ? 'No archived projects' : 'No projects found'}</p>
                     <p className="text-xs mt-1">
-                      {showArchived ? 'No projects have been archived yet.' : 'Create your first project to get started.'}
+                      {showArchived 
+                        ? 'No projects have been archived yet.' 
+                        : canManage 
+                          ? 'Create your first project to get started.' 
+                          : 'Join your first project to get started.'}
                     </p>
                   </td></tr>
                 ) : projects.map(p => {
