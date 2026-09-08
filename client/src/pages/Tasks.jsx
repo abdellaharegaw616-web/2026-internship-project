@@ -5,7 +5,7 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import {
   getTaskStatusClass, getPriorityClass, formatDate, getInitials,
-  getAvatarColor, isOverdue, timeAgo, formatFileSize
+  getAvatarColor, isOverdue, timeAgo, formatFileSize, getFileUrl
 } from '../utils/helpers';
 import Avatar from '../components/common/Avatar';
 import toast from 'react-hot-toast';
@@ -190,7 +190,7 @@ function TaskDrawer({ taskId, onClose, onUpdate, onDelete, canManage }) {
                           <p className="text-sm text-slate-700 dark:text-slate-300 truncate">{att.originalName}</p>
                           <p className="text-xs text-slate-400 dark:text-slate-500">{formatFileSize(att.size)}</p>
                         </div>
-                        <a href={`/uploads/${att.filename}`} target="_blank" rel="noreferrer"
+                        <a href={getFileUrl(`/uploads/${att.filename}`)} target="_blank" rel="noreferrer"
                           className="text-xs text-blue-600 dark:text-blue-400 hover:underline">View</a>
                       </div>
                     ))}

@@ -106,3 +106,15 @@ export const getRoleLabel = (role) => {
   const map = { Admin: 'Admin', ProjectManager: 'Project Manager', TeamMember: 'Team Member' };
   return map[role] || role;
 };
+
+// Construct full URL for backend static files
+export const getFileUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  
+  const apiUrl = import.meta.env.VITE_API_URL || '';
+  const baseUrl = apiUrl.endsWith('/api') ? apiUrl.slice(0, -4) : apiUrl;
+  
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${baseUrl}${normalizedPath}`;
+};

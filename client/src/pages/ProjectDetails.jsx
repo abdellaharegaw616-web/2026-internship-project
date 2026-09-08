@@ -12,7 +12,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   getProjectStatusClass, getPriorityClass, getTaskStatusClass,
   formatDate, getDaysRemaining, getInitials, getAvatarColor, timeAgo,
-  formatCurrency, formatFileSize
+  formatCurrency, formatFileSize, getFileUrl
 } from '../utils/helpers';
 import Avatar from '../components/common/Avatar';
 import toast from 'react-hot-toast';
@@ -562,7 +562,7 @@ export default function ProjectDetails() {
                       <p className="text-sm font-medium text-slate-800 truncate">{att.originalName}</p>
                       <p className="text-xs text-slate-400">{formatFileSize(att.size)}</p>
                     </div>
-                    <a href={`/uploads/${att.filename}`} target="_blank" rel="noopener noreferrer"
+                    <a href={getFileUrl(`/uploads/${att.filename}`)} target="_blank" rel="noopener noreferrer"
                       className="p-2 text-slate-400 hover:text-blue-600 rounded-lg">
                       <Download size={15} />
                     </a>
