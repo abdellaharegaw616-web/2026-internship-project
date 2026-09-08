@@ -382,7 +382,7 @@ export default function Projects() {
         await api.put(`/projects/${id}/archive`);
         toast.success('Project archived');
       }
-      fetchProjects();
+      setAllProjects(allProjects.filter(p => p._id !== id));
     } catch {
       toast.error('Archive action failed');
     }
