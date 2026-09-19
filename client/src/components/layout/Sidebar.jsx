@@ -40,7 +40,7 @@ export default function Sidebar() {
         </div>
         <button 
           onClick={() => document.dispatchEvent(new CustomEvent('close-sidebar'))}
-          className="lg:hidden p-1.5 -mr-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+          className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
         >
           <X size={20} />
         </button>
