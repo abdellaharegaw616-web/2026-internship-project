@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
-require('dotenv').config();
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 
 const seedSuperAdmin = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/taskflow');
+    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URL || 'mongodb://localhost:27017/taskflow');
     console.log('✅ Connected to MongoDB');
 
     // Check if SuperAdmin already exists

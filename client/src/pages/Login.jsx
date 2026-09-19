@@ -98,13 +98,17 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submitted', { email, password });
     setError('');
     setLoading(true);
     try {
+      console.log('Calling login function...');
       await login(email, password);
+      console.log('Login successful');
       toast.success('Welcome back! 👋');
       navigate('/dashboard');
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
     } finally {
       setLoading(false);

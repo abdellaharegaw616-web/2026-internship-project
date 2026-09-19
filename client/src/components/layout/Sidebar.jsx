@@ -75,7 +75,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* User Profile Footer */}
+      {/* User Profile Footer - Always visible */}
       <div className="p-4 border-t border-slate-100 dark:border-slate-900/60 bg-slate-50/40 dark:bg-slate-950/40 flex-shrink-0">
         <div className="flex items-center gap-3 p-2 rounded-xl border border-slate-100/50 dark:border-slate-900/40 bg-white dark:bg-slate-900/60 shadow-sm shadow-slate-100/10">
           <Avatar user={user} className="w-8 h-8 ring-2 ring-slate-100 dark:ring-slate-800 text-xs" />
@@ -84,7 +84,7 @@ export default function Sidebar() {
             <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate mt-1">{user?.role === 'ProjectManager' ? 'Project Manager' : user?.role}</p>
           </div>
           
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={toggleDarkMode}
               className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:text-slate-500 dark:hover:text-slate-200 dark:hover:bg-slate-800 transition-colors"
