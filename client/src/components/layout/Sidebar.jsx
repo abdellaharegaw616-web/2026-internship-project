@@ -28,7 +28,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 h-screen bg-white dark:bg-slate-950 border-r border-slate-100 dark:border-slate-900/60 flex flex-col sticky top-0 left-0 flex-shrink-0 overflow-hidden transition-colors duration-200">
+    <aside className="w-full h-full bg-white dark:bg-slate-950 border-r border-slate-100 dark:border-slate-900/60 flex flex-col flex-shrink-0 transition-colors duration-200">
       {/* Logo */}
       <div className="flex items-center justify-between px-6 h-[60px] border-b border-slate-100 dark:border-slate-900/60 flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -47,7 +47,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-4 overflow-y-auto min-h-0 space-y-1">
+      <nav className="flex-1 px-4 py-4 overflow-y-auto space-y-1 min-h-0">
         {navItems.filter(item => {
           if (item.label === 'Team' && user?.role === 'TeamMember') return false;
           return true;

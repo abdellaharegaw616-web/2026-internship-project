@@ -30,7 +30,9 @@ export default function DashboardLayout() {
 
       {/* Sidebar - fixed on mobile, static on desktop */}
       <div className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <Sidebar onClose={() => setSidebarOpen(false)} />
+        <div className="h-full flex flex-col">
+          <Sidebar onClose={() => setSidebarOpen(false)} />
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
