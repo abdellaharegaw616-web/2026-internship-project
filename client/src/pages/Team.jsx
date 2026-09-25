@@ -299,7 +299,7 @@ export default function Team() {
   const adminCount = members.filter(m => m.role === 'Admin').length;
   const pmCount = members.filter(m => m.role === 'ProjectManager').length;
 
-  const selectCls = 'px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-700 dark:text-slate-300';
+  const selectCls = 'px-4 py-2.5 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 rounded-xl text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm cursor-pointer';
 
   return (
     <div className="page-enter">
@@ -307,34 +307,34 @@ export default function Team() {
       <div className="p-4 md:p-8">
         
         {/* Tabs */}
-        <div className="flex border-b border-slate-200 dark:border-slate-700 mb-6">
+        <div className="flex border-b border-slate-200/60 dark:border-slate-700/60 mb-6 gap-2">
           <button
             onClick={() => setActiveTab('members')}
-            className={`px-4 py-3 font-medium text-sm transition-colors relative ${activeTab === 'members' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            className={`px-5 py-3 font-semibold text-sm transition-all duration-300 relative rounded-t-xl ${activeTab === 'members' ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/10' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50/50 dark:hover:bg-slate-800/30'}`}
           >
             Team Members
-            {activeTab === 'members' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full"></div>}
+            {activeTab === 'members' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full shadow-[0_-2px_8px_rgba(37,99,235,0.4)]"></div>}
           </button>
           <button
             onClick={() => setActiveTab('invitations')}
-            className={`px-4 py-3 font-medium text-sm transition-colors relative ${activeTab === 'invitations' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            className={`px-5 py-3 font-semibold text-sm transition-all duration-300 relative rounded-t-xl ${activeTab === 'invitations' ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/10' : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50/50 dark:hover:bg-slate-800/30'}`}
           >
             Invitations
-            {activeTab === 'invitations' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full"></div>}
+            {activeTab === 'invitations' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400 rounded-t-full shadow-[0_-2px_8px_rgba(37,99,235,0.4)]"></div>}
           </button>
         </div>
 
         {activeTab === 'members' && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Total Members', value: members.length, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/30' },
-              { label: 'Active', value: activeCount, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-950/30' },
-              { label: 'Admins', value: adminCount, color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-950/30' },
-              { label: 'Project Managers', value: pmCount, color: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/30' },
+              { label: 'Total Members', value: members.length, color: 'text-blue-700 dark:text-blue-400', bg: 'bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/40 dark:to-blue-900/10 border-blue-100 dark:border-blue-800/50' },
+              { label: 'Active', value: activeCount, color: 'text-green-700 dark:text-green-400', bg: 'bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/40 dark:to-green-900/10 border-green-100 dark:border-green-800/50' },
+              { label: 'Admins', value: adminCount, color: 'text-purple-700 dark:text-purple-400', bg: 'bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/40 dark:to-purple-900/10 border-purple-100 dark:border-purple-800/50' },
+              { label: 'Project Managers', value: pmCount, color: 'text-orange-700 dark:text-orange-400', bg: 'bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/40 dark:to-orange-900/10 border-orange-100 dark:border-orange-800/50' },
             ].map(stat => (
-              <div key={stat.label} className={`rounded-xl p-4 ${stat.bg} border border-transparent`}>
-                <p className={`text-2xl font-bold ${stat.color}`} style={{ fontFamily: 'Poppins, sans-serif' }}>{stat.value}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{stat.label}</p>
+              <div key={stat.label} className={`rounded-2xl p-5 ${stat.bg} border backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-black/40`}>
+                <p className={`text-3xl font-extrabold ${stat.color} mb-1 drop-shadow-sm`} style={{ fontFamily: 'Poppins, sans-serif' }}>{stat.value}</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -344,7 +344,7 @@ export default function Team() {
           <div className="flex-1 relative min-w-[200px]">
             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..."
-              className="w-full pl-11 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400" />
+              className="w-full pl-11 pr-4 py-2.5 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 rounded-xl text-sm text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm" />
           </div>
           {activeTab === 'members' && (
             <>
@@ -364,18 +364,18 @@ export default function Team() {
           <PermissionGuard permission={PERMISSIONS.MANAGE_USERS}>
             <div className="flex gap-2 shrink-0">
               <button onClick={() => setShowModal(true)}
-                className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-xl whitespace-nowrap transition-all"
-                style={{ background: 'linear-gradient(135deg, #2563EB, #3B82F6)', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
-                <Plus size={16} /> Invite Member
+                className="flex items-center gap-2 px-6 py-2.5 text-white text-sm font-bold rounded-xl whitespace-nowrap transition-all duration-300 hover:scale-105 hover:shadow-blue-500/40"
+                style={{ background: 'linear-gradient(135deg, #3B82F6, #1D4ED8)', boxShadow: '0 4px 15px rgba(37,99,235,0.3)' }}>
+                <Plus size={18} strokeWidth={2.5} /> Invite Member
               </button>
               {activeTab === 'members' && (
                 <>
                   <button onClick={() => handleExport('csv')} title="Export CSV"
-                    className="flex items-center gap-2 px-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                    <Download size={15} /> CSV
+                    className="flex items-center gap-2 px-4 py-2.5 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:scale-105 transition-all shadow-sm">
+                    <Download size={16} /> CSV
                   </button>
-                  <label className="flex items-center gap-2 px-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer">
-                    <Upload size={15} /> {importing ? 'Importing...' : 'Import'}
+                  <label className="flex items-center gap-2 px-4 py-2.5 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-slate-200/80 dark:border-slate-700/80 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:scale-105 transition-all shadow-sm cursor-pointer">
+                    <Upload size={16} /> {importing ? 'Importing...' : 'Import'}
                     <input type="file" accept=".csv,.xlsx,.xls" onChange={handleImport} disabled={importing} className="hidden" />
                   </label>
                 </>
@@ -386,60 +386,61 @@ export default function Team() {
 
         {/* Members Table */}
         {activeTab === 'members' && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] overflow-hidden relative">
             <div className="overflow-x-auto min-w-full">
               <table className="w-full min-w-[800px]">
                 <thead>
-                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
+                  <tr className="border-b border-slate-200/60 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/40 backdrop-blur-sm">
                     {['Member', 'Role', 'Department', 'Status', 'Actions'].map(col => (
-                      <th key={col} className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{col}</th>
+                      <th key={col} className="text-left px-6 py-5 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{col}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
+                <tbody className="divide-y divide-slate-100/60 dark:divide-slate-800/60">
                   {loading ? (
-                    <tr><td colSpan={5} className="text-center py-12 text-slate-400">Loading team members...</td></tr>
+                    <tr><td colSpan={5} className="text-center py-16 text-slate-400 font-medium">Loading team members...</td></tr>
                   ) : members.length === 0 ? (
-                    <tr><td colSpan={5} className="text-center py-12 text-slate-400 dark:text-slate-500">
-                      <UserCheck size={40} className="mx-auto mb-3 opacity-30" />
-                      <p className="font-medium">No members found</p>
+                    <tr><td colSpan={5} className="text-center py-16 text-slate-400 dark:text-slate-500">
+                      <UserCheck size={48} className="mx-auto mb-4 opacity-30 text-blue-500" />
+                      <p className="font-semibold text-lg text-slate-600 dark:text-slate-300">No members found</p>
+                      <p className="text-sm mt-1">Try adjusting your filters</p>
                     </td></tr>
                   ) : members.map(m => (
-                    <tr key={m._id} className="table-row-hover" onClick={() => navigate(`/users/${m._id}`)}>
+                    <tr key={m._id} className="hover:bg-blue-50/40 dark:hover:bg-blue-900/10 cursor-pointer transition-colors duration-200" onClick={() => navigate(`/app/users/${m._id}`)}>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <Avatar user={m} className="w-9 h-9 ring-2 ring-slate-100 dark:ring-slate-700 flex-shrink-0" />
+                        <div className="flex items-center gap-4">
+                          <Avatar user={m} className="w-10 h-10 ring-2 ring-white dark:ring-slate-800 shadow-sm flex-shrink-0" />
                           <div>
-                            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">{m.name}</p>
-                            <p className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">{m.email}</p>
+                            <p className="text-sm font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap group-hover:text-blue-600 transition-colors">{m.name}</p>
+                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">{m.email}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap"><span className={getRoleClass(m.role)}>{getRoleLabel(m.role)}</span></td>
-                      <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 whitespace-nowrap">{m.department?.name || '—'}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-300 whitespace-nowrap">{m.department?.name || '—'}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`badge ${m.isActive !== false ? 'badge-done' : 'badge-urgent'}`}>
+                        <span className={`badge ${m.isActive !== false ? 'bg-green-100/80 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100/80 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
                           {m.isActive !== false ? 'Active' : 'Inactive'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                          <button onClick={() => navigate(`/users/${m._id}`)}
-                            className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-950/20 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-colors" title="View profile">
-                            <ChevronRight size={15} />
+                        <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+                          <button onClick={() => navigate(`/app/users/${m._id}`)}
+                            className="p-2 hover:bg-blue-100/50 dark:hover:bg-blue-900/40 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl transition-all duration-200 hover:scale-110" title="View profile">
+                            <ChevronRight size={16} />
                           </button>
                           <PermissionGuard permission={PERMISSIONS.MANAGE_USERS}>
                             {m.role !== 'SuperAdmin' && (
                               <button onClick={() => handleDelete(m._id)}
-                                className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/20 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors" title="Remove member">
-                                <Trash2 size={15} />
+                                className="p-2 hover:bg-red-100/50 dark:hover:bg-red-900/40 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-all duration-200 hover:scale-110" title="Remove member">
+                                <Trash2 size={16} />
                               </button>
                             )}
                           </PermissionGuard>
                           {isSuperAdmin && m._id !== user?._id && (
                             <button onClick={() => handleTransferSuperAdmin(m._id)}
-                              className="p-1.5 hover:bg-purple-50 dark:hover:bg-purple-950/20 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors" title="Transfer SuperAdmin Role">
-                              <Shield size={15} />
+                              className="p-2 hover:bg-purple-100/50 dark:hover:bg-purple-900/40 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 rounded-xl transition-all duration-200 hover:scale-110" title="Transfer SuperAdmin Role">
+                              <Shield size={16} />
                             </button>
                           )}
                         </div>
@@ -454,49 +455,50 @@ export default function Team() {
 
         {/* Invitations Table */}
         {activeTab === 'invitations' && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] overflow-hidden relative">
             <div className="overflow-x-auto min-w-full">
               <table className="w-full min-w-[800px]">
                 <thead>
-                  <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
+                  <tr className="border-b border-slate-200/60 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/40 backdrop-blur-sm">
                     {['Email', 'Role', 'Status', 'Invited By', 'Date', 'Actions'].map(col => (
-                      <th key={col} className="text-left px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{col}</th>
+                      <th key={col} className="text-left px-6 py-5 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">{col}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50 dark:divide-slate-800/60">
+                <tbody className="divide-y divide-slate-100/60 dark:divide-slate-800/60">
                   {loading ? (
-                    <tr><td colSpan={6} className="text-center py-12 text-slate-400">Loading invitations...</td></tr>
+                    <tr><td colSpan={6} className="text-center py-16 text-slate-400 font-medium">Loading invitations...</td></tr>
                   ) : invitations.length === 0 ? (
-                    <tr><td colSpan={6} className="text-center py-12 text-slate-400 dark:text-slate-500">
-                      <Mail size={40} className="mx-auto mb-3 opacity-30" />
-                      <p className="font-medium">No invitations found</p>
+                    <tr><td colSpan={6} className="text-center py-16 text-slate-400 dark:text-slate-500">
+                      <Mail size={48} className="mx-auto mb-4 opacity-30 text-blue-500" />
+                      <p className="font-semibold text-lg text-slate-600 dark:text-slate-300">No invitations found</p>
+                      <p className="text-sm mt-1">Pending invites will appear here</p>
                     </td></tr>
                   ) : invitations.map(inv => (
-                    <tr key={inv._id} className="table-row-hover">
+                    <tr key={inv._id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/30 transition-colors duration-200">
                       <td className="px-6 py-4">
-                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{inv.email}</p>
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{inv.email}</p>
                       </td>
                       <td className="px-6 py-4"><span className={getRoleClass(inv.role)}>{getRoleLabel(inv.role)}</span></td>
                       <td className="px-6 py-4">
-                        <span className={`badge ${inv.status === 'Pending' ? 'badge-in-progress' : inv.status === 'Accepted' ? 'badge-done' : 'badge-urgent'}`}>
+                        <span className={`badge ${inv.status === 'Pending' ? 'bg-amber-100/80 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : inv.status === 'Accepted' ? 'bg-green-100/80 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100/80 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
                           {inv.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{inv.invitedBy?.name || 'Unknown'}</td>
-                      <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{new Date(inv.createdAt).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-400">{inv.invitedBy?.name || 'Unknown'}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-slate-600 dark:text-slate-400">{new Date(inv.createdAt).toLocaleDateString()}</td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5">
                           {inv.status === 'Pending' && (
                             <button onClick={() => handleRevokeInvite(inv._id)}
-                              className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/20 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors flex items-center gap-1 text-xs" title="Revoke invitation">
-                              <StopCircle size={15} /> Revoke
+                              className="px-3 py-1.5 hover:bg-red-100/50 dark:hover:bg-red-900/40 text-slate-500 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-all duration-200 flex items-center gap-1.5 text-xs font-semibold" title="Revoke invitation">
+                              <StopCircle size={14} /> Revoke
                             </button>
                           )}
                           {inv.status !== 'Pending' && (
                             <button onClick={() => handleDeleteInvite(inv._id)}
-                              className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/20 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors" title="Delete invitation">
-                              <Trash2 size={15} />
+                              className="p-2 hover:bg-red-100/50 dark:hover:bg-red-900/40 text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-xl transition-all duration-200 hover:scale-110" title="Delete invitation">
+                              <Trash2 size={16} />
                             </button>
                           )}
                         </div>
