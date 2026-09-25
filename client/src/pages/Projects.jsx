@@ -361,7 +361,7 @@ export default function Projects() {
     try {
       const { data } = await api.post(`/projects/${id}/clone`);
       toast.success('Project cloned!');
-      navigate(`/projects/${data.project._id}`);
+      navigate(`/app/projects/${data.project._id}`);
     } catch {
       toast.error('Clone failed');
     }
@@ -460,7 +460,7 @@ export default function Projects() {
                 ) : projects.map(p => {
                   const days = getDaysRemaining(p.endDate);
                   return (
-                    <tr key={p._id} className="table-row-hover" onClick={() => navigate(`/projects/${p._id}`)}>
+                    <tr key={p._id} className="table-row-hover cursor-pointer" onClick={() => navigate(`/app/projects/${p._id}`)}>
                       <td className="px-5 py-4">
                         <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 whitespace-nowrap">{p.title}</p>
                         <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-1">{p.description}</p>
@@ -519,7 +519,7 @@ export default function Projects() {
                               </button>
                             </>
                           )}
-                          <button onClick={() => navigate(`/projects/${p._id}`)} title="View"
+                          <button onClick={() => navigate(`/app/projects/${p._id}`)} title="View"
                             className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-950/20 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-colors">
                             <ChevronRight size={14} />
                           </button>

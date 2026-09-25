@@ -38,7 +38,7 @@ export default function Sidebar() {
             <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Project Management</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={() => document.dispatchEvent(new CustomEvent('close-sidebar'))}
           className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
         >
@@ -56,10 +56,10 @@ export default function Sidebar() {
             key={to}
             to={to}
             onClick={() => document.dispatchEvent(new CustomEvent('close-sidebar'))}
-            className={({ isActive }) => 
+            className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 relative group
-              ${isActive 
-                ? 'bg-blue-50/80 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 font-semibold' 
+              ${isActive
+                ? 'bg-blue-50/80 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 font-semibold'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-900/60'
               }`
             }
@@ -83,7 +83,7 @@ export default function Sidebar() {
             <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate leading-none">{user?.name}</p>
             <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate mt-1">{user?.role === 'ProjectManager' ? 'Project Manager' : user?.role}</p>
           </div>
-          
+
           <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={toggleDarkMode}
