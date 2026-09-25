@@ -86,13 +86,22 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-900">
-      {/* Navbar */}
-      <PublicNavbar />
+    <div className="min-h-screen relative">
+      {/* Fixed Background Image */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0" 
+        style={{ backgroundImage: "url('/workflow-timeline.jpg')" }}
+      ></div>
+      {/* Smart Overlay for Readability */}
+      <div className="fixed inset-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-[2px] z-0 transition-colors duration-300"></div>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="relative z-10">
+        {/* Navbar */}
+        <PublicNavbar />
+
+        {/* Hero Section */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/50 text-sm text-[#2563EB] dark:text-blue-400 mb-6">
@@ -377,6 +386,8 @@ export default function Landing() {
         </div>
       </section>
 
+
+
       {/* Team Collaboration Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
@@ -549,6 +560,7 @@ export default function Landing() {
 
       {/* Footer */}
       <PublicFooter />
+      </div>
     </div>
   );
 }
