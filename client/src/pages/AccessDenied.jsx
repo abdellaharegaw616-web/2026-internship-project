@@ -16,7 +16,7 @@ export default function AccessDenied() {
           You don't have permission to access this page. Please contact your administrator if you believe this is a mistake.
         </p>
         <Link
-          to="/dashboard"
+          to="/app/dashboard"
           className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors inline-block w-full"
         >
           Return to Dashboard

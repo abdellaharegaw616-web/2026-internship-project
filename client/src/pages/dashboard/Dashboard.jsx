@@ -103,7 +103,7 @@ const Dashboard = () => {
           icon={FolderKanban}
           color="blue"
           trend={{ positive: true, value: 12 }}
-          onClick={() => navigate('/projects')}
+          onClick={() => navigate('/app/projects')}
         />
         <StatCard
           title="Active Projects"
@@ -111,7 +111,7 @@ const Dashboard = () => {
           icon={TrendingUp}
           color="green"
           trend={{ positive: true, value: 8 }}
-          onClick={() => navigate('/projects')}
+          onClick={() => navigate('/app/projects')}
         />
         <StatCard
           title="Total Tasks"
@@ -119,7 +119,7 @@ const Dashboard = () => {
           icon={CheckSquare}
           color="purple"
           trend={{ positive: true, value: 15 }}
-          onClick={() => navigate('/tasks')}
+          onClick={() => navigate('/app/tasks')}
         />
         <StatCard
           title="Completed Tasks"
@@ -127,7 +127,7 @@ const Dashboard = () => {
           icon={Users}
           color="orange"
           trend={{ positive: true, value: 20 }}
-          onClick={() => navigate('/tasks')}
+          onClick={() => navigate('/app/tasks')}
         />
       </div>
 
@@ -144,7 +144,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Recent Projects</h2>
             <button
-              onClick={() => navigate('/projects')}
+              onClick={() => navigate('/app/projects')}
               className="text-blue-600 hover:underline text-sm"
             >
               View All
@@ -193,7 +193,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-900">Upcoming Deadlines</h2>
             <button
-              onClick={() => navigate('/tasks')}
+              onClick={() => navigate('/app/tasks')}
               className="text-blue-600 hover:underline text-sm"
             >
               View All
@@ -243,7 +243,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Recent Tasks</h2>
           <button
-            onClick={() => navigate('/tasks')}
+            onClick={() => navigate('/app/tasks')}
             className="text-blue-600 hover:underline text-sm"
           >
             View All

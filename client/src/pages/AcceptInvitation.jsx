@@ -62,7 +62,7 @@ export default function AcceptInvitation() {
       localStorage.setItem('taskflow_token', data.token);
       localStorage.setItem('taskflow_user', JSON.stringify(data.user));
       // Let's force a reload so AuthContext picks up the new token
-      window.location.href = '/dashboard';
+      window.location.href = '/app/dashboard';
       
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to accept invitation');

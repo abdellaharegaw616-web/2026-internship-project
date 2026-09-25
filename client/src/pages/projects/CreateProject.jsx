@@ -28,7 +28,7 @@ const CreateProject = () => {
   const handleSubmit = async (projectData) => {
     try {
       await projectService.createProject(projectData);
-      navigate('/projects');
+      navigate('/app/projects');
     } catch (error) {
       console.error('Error creating project:', error);
       alert('Failed to create project');
@@ -47,7 +47,7 @@ const CreateProject = () => {
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
         <button
-          onClick={() => navigate('/projects')}
+          onClick={() => navigate('/app/projects')}
           className="text-gray-600 hover:text-gray-900 transition-colors"
         >
           ← Back to Projects
@@ -58,7 +58,7 @@ const CreateProject = () => {
         <ProjectForm
           users={users}
           onSubmit={handleSubmit}
-          onCancel={() => navigate('/projects')}
+          onCancel={() => navigate('/app/projects')}
         />
       </div>
     </div>

@@ -108,7 +108,7 @@ const ProjectDetails = () => {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">Project not found</p>
-        <button onClick={() => navigate('/projects')} className="mt-4 text-blue-600 hover:underline">
+        <button onClick={() => navigate('/app/projects')} className="mt-4 text-blue-600 hover:underline">
           Go back to projects
         </button>
       </div>
@@ -123,7 +123,7 @@ const ProjectDetails = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <button
-          onClick={() => navigate('/projects')}
+          onClick={() => navigate('/app/projects')}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft size={20} />
@@ -131,7 +131,7 @@ const ProjectDetails = () => {
         </button>
         {(currentUser?.role === 'Admin' || currentUser?.role === 'ProjectManager') && (
           <div className="flex gap-2">
-            <Button onClick={() => navigate(`/projects/${project._id}/edit`)} variant="secondary">
+            <Button onClick={() => navigate(`/app/projects/${project._id}/edit`)} variant="secondary">
               <Edit size={16} className="mr-2" />
               Edit
             </Button>

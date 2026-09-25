@@ -16,10 +16,10 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { to: '/dashboard', label: 'Dashboard' },
-    { to: '/projects', label: 'Projects' },
-    { to: '/tasks', label: 'Tasks' },
-    { to: '/team', label: 'Team' },
+    { to: '/app/dashboard', label: 'Dashboard' },
+    { to: '/app/projects', label: 'Projects' },
+    { to: '/app/tasks', label: 'Tasks' },
+    { to: '/app/users', label: 'Team' },
     { to: '/settings', label: 'Settings' },
   ];
 

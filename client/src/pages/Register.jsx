@@ -106,7 +106,7 @@ export default function Register() {
         role:     'TeamMember',       // ← RBAC guard: public users cannot self-assign Admin
       });
       toast.success('Account created successfully! 🎉');
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {

@@ -10,11 +10,11 @@ import { getInitials, getAvatarColor } from '../../utils/helpers';
 import Avatar from '../common/Avatar';
 
 const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/projects', icon: FolderKanban, label: 'Projects' },
-  { to: '/tasks', icon: CheckSquare, label: 'Tasks' },
-  { to: '/users', icon: Users, label: 'Team' },
-  { to: '/settings', icon: Settings, label: 'Settings' },
+  { to: '/app/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/app/projects', icon: FolderKanban, label: 'Projects' },
+  { to: '/app/tasks', icon: CheckSquare, label: 'Tasks' },
+  { to: '/app/users', icon: Users, label: 'Team' },
+  { to: '/app/settings', icon: Settings, label: 'Settings' },
 ];
 
 export default function Sidebar() {

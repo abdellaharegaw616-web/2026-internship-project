@@ -106,7 +106,7 @@ export default function Login() {
       await login(email, password);
       console.log('Login successful');
       toast.success('Welcome back! 👋');
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (err) {
       console.error('Login error:', err);
       setError(err.response?.data?.message || 'Invalid credentials. Please try again.');

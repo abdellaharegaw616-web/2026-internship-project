@@ -88,7 +88,7 @@ export default function ProjectDetails() {
     if (!window.confirm('Delete this project and all its tasks?')) return;
     try {
       await api.delete(`/projects/${id}`);
-      navigate('/projects');
+      navigate('/app/projects');
       toast.success('Project deleted');
     } catch { toast.error('Delete failed'); }
   };
@@ -97,7 +97,7 @@ export default function ProjectDetails() {
     try {
       const { data: res } = await api.post(`/projects/${id}/clone`);
       toast.success('Project cloned!');
-      navigate(`/projects/${res.project._id}`);
+      navigate(`/app/projects/${res.project._id}`);
     } catch { toast.error('Clone failed'); }
   };
 
@@ -208,7 +208,7 @@ export default function ProjectDetails() {
     <div className="page-enter">
       <Header title={project.title} subtitle="Project details and task overview" />
       <div className="p-4 md:p-8 space-y-6">
-        <button onClick={() => navigate('/projects')}
+        <button onClick={() => navigate('/app/projects')}
           className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800">
           <ArrowLeft size={16} /> Back to Projects
         </button>
