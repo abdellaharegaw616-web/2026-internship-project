@@ -63,20 +63,20 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-900">
       {/* ── Navbar ─────────────────────────────────────────────── */}
       <PublicNavbar />
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
         <div className="text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-sm text-[#2563EB] mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/50 text-sm text-[#2563EB] dark:text-blue-400 mb-6">
             <span>About TaskFlow</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 dark:text-white mb-6 leading-tight">
             Simple Project Management for Modern Teams
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-slate-400 max-w-2xl mx-auto">
             {COMPANY_INFO.description}
           </p>
         </div>
@@ -84,12 +84,12 @@ export default function About() {
 
       {/* ── A. Why TaskFlow ─────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white border border-gray-200 rounded-xl p-8 sm:p-12">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-8 sm:p-12">
           <div className="max-w-2xl">
-            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
               Why TaskFlow?
             </h2>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-slate-400 leading-relaxed">
               TaskFlow brings projects, tasks, teams, and progress management together in one
               organized workspace. It is designed to reduce scattered information across
               spreadsheets, messaging applications, emails, and separate documents.
@@ -101,7 +101,7 @@ export default function About() {
       {/* ── B. Our Purpose — value cards ────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-3">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-3">
             Built to Make Work More Organized
           </h2>
         </div>
@@ -109,13 +109,13 @@ export default function About() {
           {valueCards.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
-              className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-200 hover:shadow-sm transition-all duration-200"
+              className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 hover:border-blue-200 hover:shadow-sm transition-all duration-200"
             >
-              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
-                <Icon size={20} className="text-[#2563EB]" />
+              <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center mb-4">
+                <Icon size={20} className="text-[#2563EB] dark:text-blue-400" />
               </div>
-              <h3 className="text-base font-semibold text-gray-900 mb-2">{title}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+              <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">{title}</h3>
+              <p className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed">{description}</p>
             </div>
           ))}
         </div>
@@ -123,20 +123,20 @@ export default function About() {
 
       {/* ── C. What TaskFlow Provides ───────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white border border-gray-200 rounded-xl p-8 sm:p-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-8">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-8 sm:p-12">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-8">
             What TaskFlow Provides
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {features.map(({ icon: Icon, label }) => (
               <div
                 key={label}
-                className="flex items-center gap-3 p-4 bg-[#F8FAFC] border border-gray-200 rounded-lg"
+                className="flex items-center gap-3 p-4 bg-[#F8FAFC] dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg"
               >
-                <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Icon size={16} className="text-[#2563EB]" />
+                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Icon size={16} className="text-[#2563EB] dark:text-blue-400" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">{label}</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{label}</span>
               </div>
             ))}
           </div>
@@ -146,10 +146,10 @@ export default function About() {
       {/* ── D. Simple Workflow ──────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-3">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-3">
             Simple Workflow
           </h2>
-          <p className="text-gray-600 text-sm">Five steps to organized, productive teamwork.</p>
+          <p className="text-gray-600 dark:text-slate-400 text-sm">Five steps to organized, productive teamwork.</p>
         </div>
 
         {/* Desktop: horizontal chain */}
@@ -160,7 +160,7 @@ export default function About() {
                 <div className="w-12 h-12 bg-[#2563EB] rounded-xl flex items-center justify-center shadow-sm">
                   <Icon size={20} className="text-white" />
                 </div>
-                <span className="text-sm font-medium text-gray-700 text-center whitespace-nowrap">
+                <span className="text-sm font-medium text-gray-700 dark:text-slate-300 text-center whitespace-nowrap">
                   {label}
                 </span>
               </div>
@@ -175,14 +175,14 @@ export default function About() {
         <div className="lg:hidden flex flex-col gap-3 max-w-sm mx-auto">
           {workflowSteps.map(({ icon: Icon, label }, index) => (
             <div key={label} className="flex flex-col items-center gap-1">
-              <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 w-full">
+              <div className="flex items-center gap-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 w-full">
                 <div className="w-9 h-9 bg-[#2563EB] rounded-lg flex items-center justify-center flex-shrink-0">
                   <Icon size={16} className="text-white" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">{label}</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{label}</span>
               </div>
               {index < workflowSteps.length - 1 && (
-                <div className="w-px h-4 bg-gray-200" />
+                <div className="w-px h-4 bg-gray-200 dark:bg-slate-700" />
               )}
             </div>
           ))}
@@ -191,11 +191,11 @@ export default function About() {
 
       {/* ── E. CTA ──────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-white border border-gray-200 rounded-xl p-10 sm:p-14 text-center">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-10 sm:p-14 text-center">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white mb-4">
             Ready to Organize Your Work?
           </h2>
-          <p className="text-gray-600 mb-8 max-w-lg mx-auto">
+          <p className="text-gray-600 dark:text-slate-400 mb-8 max-w-lg mx-auto">
             Start managing your projects, tasks, and teams in one centralized workspace.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -208,7 +208,7 @@ export default function About() {
             </Link>
             <Link
               to="/contact"
-              className="px-6 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+              className="px-6 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 dark:bg-slate-900/50 transition-colors flex items-center justify-center gap-2"
             >
               Contact Us
               <ArrowRight size={16} />

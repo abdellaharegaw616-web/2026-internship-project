@@ -153,27 +153,27 @@ export default function Contact() {
 
   // ── Field helper ───────────────────────────────────────────
   const inputClass = (name) =>
-    `w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 bg-white outline-none transition-colors placeholder:text-gray-400 ${
+    `w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-800 outline-none transition-colors placeholder:text-gray-400 ${
       errors[name] && touched[name]
         ? 'border-red-400 focus:border-red-500'
-        : 'border-gray-200 focus:border-[#2563EB]'
+        : 'border-gray-200 dark:border-slate-700 focus:border-[#2563EB]'
     }`;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-900">
       {/* ── Navbar ─────────────────────────────────────────────── */}
       <PublicNavbar />
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         <div className="text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-sm text-[#2563EB] mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/50 text-sm text-[#2563EB] dark:text-blue-400 mb-6">
             <span>Contact</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 mb-5 leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-semibold text-gray-900 dark:text-white mb-5 leading-tight">
             Get in Touch
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 dark:text-slate-400">
             Have a question about TaskFlow or want to learn more? Send us a message and we will
             get back to you.
           </p>
@@ -186,24 +186,24 @@ export default function Contact() {
 
           {/* ── LEFT: contact info ─────────────────────────────── */}
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Contact TaskFlow</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Contact TaskFlow</h2>
             <div className="flex flex-col gap-4">
               {contactCards.map(({ icon: Icon, label, value, href }) => (
                 <div
                   key={label}
-                  className="bg-white border border-gray-200 rounded-xl p-5 flex items-start gap-4 hover:border-blue-200 hover:shadow-sm transition-all duration-200"
+                  className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-5 flex items-start gap-4 hover:border-blue-200 hover:shadow-sm transition-all duration-200"
                 >
-                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon size={18} className="text-[#2563EB]" />
+                  <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Icon size={18} className="text-[#2563EB] dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                    <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-1">
                       {label}
                     </p>
                     {href ? (
                       <a
                         href={href}
-                        className="text-sm text-gray-800 hover:text-[#2563EB] transition-colors"
+                        className="text-sm text-gray-800 hover:text-[#2563EB] dark:text-blue-400 transition-colors"
                       >
                         {value}
                       </a>
@@ -217,14 +217,14 @@ export default function Contact() {
           </div>
 
           {/* ── RIGHT: contact form ────────────────────────────── */}
-          <div className="bg-white border border-gray-200 rounded-xl p-6 sm:p-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Send a Message</h2>
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 sm:p-8">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Send a Message</h2>
 
             {/* Success banner */}
             {submitStatus === 'success' && (
-              <div className="flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-lg mb-6">
+              <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 rounded-lg mb-6">
                 <CheckCircle2 size={18} className="text-green-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-green-700">
+                <p className="text-sm text-green-700 dark:text-green-400">
                   Your message has been sent successfully. We will get back to you soon.
                 </p>
               </div>
@@ -232,13 +232,13 @@ export default function Contact() {
 
             {/* Error banner */}
             {submitStatus === 'error' && (
-              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
+              <div className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-lg mb-6">
                 <AlertCircle size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-red-600">
                   Something went wrong. Please try again or email us directly at{' '}
                   <a
                     href={`mailto:${CONTACT_INFO.email}`}
-                    className="underline hover:text-red-700"
+                    className="underline hover:text-red-700 dark:text-red-400"
                   >
                     {CONTACT_INFO.email}
                   </a>
@@ -252,7 +252,7 @@ export default function Contact() {
               <div>
                 <label
                   htmlFor="fullName"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                  className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5"
                 >
                   Full Name <span className="text-red-500">*</span>
                 </label>
@@ -282,7 +282,7 @@ export default function Contact() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                  className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5"
                 >
                   Email Address <span className="text-red-500">*</span>
                 </label>
@@ -312,7 +312,7 @@ export default function Contact() {
               <div>
                 <label
                   htmlFor="subject"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                  className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5"
                 >
                   Subject <span className="text-red-500">*</span>
                 </label>
@@ -341,7 +341,7 @@ export default function Contact() {
               <div>
                 <label
                   htmlFor="message"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
+                  className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5"
                 >
                   Message <span className="text-red-500">*</span>
                 </label>
