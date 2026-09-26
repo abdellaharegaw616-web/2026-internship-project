@@ -1,6 +1,7 @@
 <div align="center">
 
-<img src="https://via.placeholder.com/150x150.png?text=Task+Flow+Logo" alt="TaskFlow Logo" width="120" height="120" style="border-radius: 20px;" />
+<img width="38" height="28" alt="image" src="https://github.com/user-attachments/assets/5dfa0e8e-fe9d-4c89-9ace-056c2cd607b6" />
+
 
 # TaskFlow
 **Project Management System**
