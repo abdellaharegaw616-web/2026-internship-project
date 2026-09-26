@@ -4,9 +4,9 @@
  */
 
 export const CONTACT_INFO = {
-  email: 'support@taskflow.com',
+  email: 'abdellaj636@gmail.com',
   location: 'Arba Minch, Ethiopia',
-  supportName: 'TaskFlow Support',
+  supportName: 'Abdullah',
 };
 
 export const COMPANY_INFO = {
