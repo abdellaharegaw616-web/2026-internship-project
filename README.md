@@ -286,20 +286,22 @@ TaskFlow's design philosophy centers on reducing cognitive load and maximizing u
 ## 📸 Screenshots
 
 ### Dashboard
-![Dashboard](./screenshots/dashboard.png)
+<img width="960" height="409" alt="image" src="https://github.com/user-attachments/assets/c6642be8-1bf0-4382-aedd-ee64518e2b01" />
+
 
 ### Projects
-![Projects](./screenshots/projects.png)
+<img width="956" height="410" alt="image" src="https://github.com/user-attachments/assets/bab4d4cc-b086-42b9-beeb-bbb795eeeac8" />
+
 
 ### Tasks
-![Tasks](./screenshots/tasks.png)
+<img width="954" height="410" alt="image" src="https://github.com/user-attachments/assets/0e6edd29-d5d1-4513-ba23-5c480a06a164" />
+
 
 ### Team
-![Team](./screenshots/team.png)
+<img width="960" height="409" alt="image" src="https://github.com/user-attachments/assets/f30f5028-438c-4dc0-b594-8f60ca046a08" />
 
-*(Note: Replace placeholder paths with actual image files when capturing screenshots)*
 
----
+
 
 ## 🚢 Deployment
 
@@ -360,7 +362,7 @@ Developing TaskFlow successfully demonstrates mastery over:
 - **Location:** Arba Minch, Ethiopia
 - **GitHub:** [https://github.com/abdellaharegaw616-web](https://github.com/abdellaharegaw616-web)
 - **LinkedIn:** [Insert LinkedIn URL]
-- **Portfolio:** [Insert Portfolio URL]
+- **Portfolio:** [https://2026-internship-project.vercel.app]
 
 ---
 
