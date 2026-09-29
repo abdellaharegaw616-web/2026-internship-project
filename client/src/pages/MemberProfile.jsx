@@ -60,7 +60,7 @@ export default function MemberProfile() {
       <Header title="Member Profile" subtitle={member?.name ? `${member.name}'s performance overview` : 'Member performance overview'} />
       <div className="p-8 space-y-6">
         {/* Back */}
-        <button onClick={() => navigate('/users')}
+        <button onClick={() => navigate('/app/users')}
           className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800 transition-colors">
           <ArrowLeft size={16} /> Back to Team
         </button>

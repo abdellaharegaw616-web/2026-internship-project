@@ -23,6 +23,7 @@ import Tasks from './pages/Tasks';
 import Settings from './pages/Settings';
 import AccessDenied from './pages/AccessDenied';
 import AcceptInvitation from './pages/AcceptInvitation';
+import Notifications from './pages/Notifications';
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ export default function App() {
                   } />
                   
                   <Route path="tasks" element={<Tasks />} />
+                  <Route path="notifications" element={<Notifications />} />
                   <Route path="settings" element={<Settings />} />
                   <Route path="access-denied" element={<AccessDenied />} />
                 </Route>

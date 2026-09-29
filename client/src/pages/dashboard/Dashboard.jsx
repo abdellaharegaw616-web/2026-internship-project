@@ -151,17 +151,26 @@ const Dashboard = () => {
             </button>
           </div>
           {recentProjects.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No projects yet</p>
+            <div className="text-center py-8">
+              <FolderKanban size={48} className="mx-auto mb-4 text-gray-300" />
+              <p className="text-gray-500 mb-2">No projects yet</p>
+              <button
+                onClick={() => navigate('/app/projects')}
+                className="text-blue-600 hover:underline text-sm font-medium"
+              >
+                Create your first project
+              </button>
+            </div>
           ) : (
             <div className="space-y-3">
               {recentProjects.map((project) => {
                 const daysRemaining = getDaysRemaining(project.endDate);
                 const isOverdue = daysRemaining !== null && daysRemaining < 0;
-                
+
                 return (
                   <div
                     key={project._id}
-                    onClick={() => navigate(`/projects/${project._id}`)}
+                    onClick={() => navigate(`/app/projects/${project._id}`)}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
                   >
                     <div className="flex-1">
@@ -200,16 +209,25 @@ const Dashboard = () => {
             </button>
           </div>
           {upcomingDeadlines.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No upcoming deadlines</p>
+            <div className="text-center py-8">
+              <Calendar size={48} className="mx-auto mb-4 text-gray-300" />
+              <p className="text-gray-500 mb-2">No upcoming deadlines</p>
+              <button
+                onClick={() => navigate('/app/projects')}
+                className="text-blue-600 hover:underline text-sm font-medium"
+              >
+                Set task due dates
+              </button>
+            </div>
           ) : (
             <div className="space-y-3">
               {upcomingDeadlines.map((task) => {
                 const daysRemaining = getDaysRemaining(task.dueDate);
-                
+
                 return (
                   <div
                     key={task._id}
-                    onClick={() => navigate(`/tasks/${task._id}`)}
+                    onClick={() => navigate(`/app/tasks/${task._id}`)}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
@@ -250,13 +268,22 @@ const Dashboard = () => {
           </button>
         </div>
         {recentTasks.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">No tasks yet</p>
+          <div className="text-center py-8">
+            <CheckSquare size={48} className="mx-auto mb-4 text-gray-300" />
+            <p className="text-gray-500 mb-2">No tasks yet</p>
+            <button
+              onClick={() => navigate('/app/projects')}
+              className="text-blue-600 hover:underline text-sm font-medium"
+              >
+                Create tasks in your projects
+            </button>
+          </div>
         ) : (
           <div className="space-y-3">
             {recentTasks.map((task) => (
               <div
                 key={task._id}
-                onClick={() => navigate(`/tasks/${task._id}`)}
+                onClick={() => navigate(`/app/tasks/${task._id}`)}
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-3">

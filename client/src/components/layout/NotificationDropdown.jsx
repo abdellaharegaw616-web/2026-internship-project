@@ -103,12 +103,25 @@ export default function NotificationDropdown() {
       await handleMarkAsRead(notification._id);
     }
     setIsOpen(false);
+
+    // Log notification data for debugging
+    console.log('Notification clicked:', notification);
+
     if (notification.actionUrl) {
-      navigate(notification.actionUrl);
+      // Ensure actionUrl has /app prefix if it's a protected route
+      const url = notification.actionUrl.startsWith('/app') ? notification.actionUrl : `/app${notification.actionUrl}`;
+      console.log('Navigating to actionUrl:', url);
+      navigate(url);
     } else if (notification.relatedModel === 'Task' && notification.relatedTo) {
-      navigate(`/tasks/${notification.relatedTo}`);
+      const url = `/app/tasks/${notification.relatedTo}`;
+      console.log('Navigating to task:', url);
+      navigate(url);
     } else if (notification.relatedModel === 'Project' && notification.relatedTo) {
-      navigate(`/projects/${notification.relatedTo}`);
+      const url = `/app/projects/${notification.relatedTo}`;
+      console.log('Navigating to project:', url);
+      navigate(url);
+    } else {
+      console.log('No valid navigation target for notification');
     }
   };
 
@@ -202,11 +215,11 @@ export default function NotificationDropdown() {
               </div>
             )}
           </div>
-          
+
           {notifications.length > 0 && (
             <div className="p-2 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-              <button 
-                onClick={() => navigate('/notifications')} // If there is a page for it
+              <button
+                onClick={() => navigate('/app/notifications')}
                 className="w-full py-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-center rounded hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
               >
                 View all notifications

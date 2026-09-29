@@ -73,11 +73,11 @@ export default function Header({ title, subtitle }) {
     setShowResults(false);
     setSearchQuery('');
     if (result.type === 'task') {
-      navigate(`/tasks/${result._id}`);
+      navigate(`/app/tasks/${result._id}`);
     } else if (result.type === 'project') {
-      navigate(`/projects/${result._id}`);
+      navigate(`/app/projects/${result._id}`);
     } else if (result.type === 'user') {
-      navigate(`/users/${result._id}`);
+      navigate(`/app/users/${result._id}`);
     }
   };
 
