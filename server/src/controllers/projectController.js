@@ -142,6 +142,11 @@ const createProject = async (req, res, next) => {
       estimatedBudget, milestones,
     } = req.body;
 
+    const projectMembers = members ? [...members] : [];
+    if (!projectMembers.includes(req.user._id.toString())) {
+      projectMembers.push(req.user._id.toString());
+    }
+
     const project = await Project.create({
       title,
       description,
@@ -149,7 +154,7 @@ const createProject = async (req, res, next) => {
       priority,
       startDate,
       endDate,
-      members,
+      members: projectMembers,
       estimatedBudget: estimatedBudget || 0,
       milestones: milestones || [],
       createdBy: req.user._id,
@@ -228,6 +233,11 @@ const createFromTemplate = async (req, res, next) => {
       return { title: m.title, dueDate, completed: false };
     });
 
+    const projectMembers = members ? [...members] : [];
+    if (!projectMembers.includes(req.user._id.toString())) {
+      projectMembers.push(req.user._id.toString());
+    }
+
     const project = await Project.create({
       title: title || template.name,
       description: template.description,
@@ -235,7 +245,7 @@ const createFromTemplate = async (req, res, next) => {
       priority: template.defaultPriority,
       startDate,
       endDate,
-      members: members || [],
+      members: projectMembers,
       estimatedBudget: template.estimatedBudget,
       milestones,
       templateId: template._id,
